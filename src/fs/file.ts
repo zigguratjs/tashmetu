@@ -1,133 +1,63 @@
-import {inject, service, Activator, Provider} from '@samizdatjs/tiamat';
-import {Collection, MemoryDatabase, Serializer, EventEmitter} from '@samizdatjs/tashmetu';
-import {FileSystem, FileConfig} from './interfaces';
-import * as _ from 'lodash';
+import {Collection, Serializer} from '@samizdatjs/tashmetu';
+import {FileSystem, FileConfig, FSCollection} from './interfaces';
+import {each, pull, transform} from 'lodash';
 
 export function file(config: FileConfig): any {
   return function (target: any) {
     Reflect.defineMetadata('tiamat:service', {
       name: config.name,
       singleton: true,
-      activator: 'tashmetu.FileCollectionActivator'
+      activator: 'tashmetu.FSCollectionManager'
     }, target);
     Reflect.defineMetadata('tashmetu:file', config, target);
   };
 }
 
-@service({
-  name: 'tashmetu.FileCollectionActivator',
-  singleton: true
-})
-export class FileCollectionActivator
-  implements Activator<FileCollection>
-{
-  @inject('tiamat.Provider') private provider: Provider;
-  @inject('tashmetu.MemoryDatabase') private cache: MemoryDatabase;
-  @inject('tashmetu.FileSystem') private fileSys: FileSystem;
-
-  public activate(obj: FileCollection): any {
-    let config = Reflect.getOwnMetadata('tashmetu:file', obj.constructor);
-    let serializer = config.serializer(this.provider);
-    let cache = this.cache.createCollection(config.name);
-    obj.setSerializer(serializer);
-    obj.setCache(cache);
-    obj.setFileSystem(this.fileSys);
-    return obj;
-  }
-}
-
-export class FileCollection extends EventEmitter implements Collection {
+export class File implements FSCollection {
+  private upsertQueue: string[] = [];
   private storing = false;
-  private cache: Collection;
-  private serializer: Serializer;
-  private config: FileConfig;
-  private fileSys: FileSystem;
 
-  public constructor() {
-    super();
-    this.config = Reflect.getOwnMetadata('tashmetu:file', this.constructor);
+  public constructor(
+    private collection: Collection,
+    private serializer: Serializer,
+    private fs: FileSystem,
+    private config: FileConfig
+  ) {
+    collection.on('document-upserted', (doc: any) => {
+      if (this.upsertQueue.indexOf(doc._id) < 0) {
+        collection.find({}, {}, (docs: any) => {
+          let dict = transform(docs, (result: any, obj: any) => {
+            result[doc._id] = obj;
+          }, {});
+          this.storing = true;
+          fs.write(serializer.serialize(dict), config.path);
+        });
+      }
+      pull(this.upsertQueue, doc._id);
+    });
+
+    this.update(config.path);
   }
 
-  public upsert(doc: any, cb: () => void): void {
-    this.storing = true;
-    this.cache.upsert(doc, () => {
-      this.cache.find({}, {}, (docs: any) => {
-        let dict = _.transform(docs, (result: any, obj: any) => {
-          result[doc._id] = obj;
-        }, {});
-        this.fileSys.write(this.serializer.serialize(dict), this.config.path);
+  public update(path: string): void {
+    if (!this.storing) {
+      let dict = this.readFile();
+      each(dict, (doc: any, id: string) => {
+        doc._id = id;
+        this.upsertQueue.push(id);
+        this.collection.upsert(doc, () => {
+          return;
+        });
       });
-    });
-  }
-
-  public find(filter: any, options: any, fn: (result: any) => void): void {
-    this.cache.find(filter, options, fn);
-  }
-
-  public findOne(filter: Object, options: Object, fn: (result: any) => void): void {
-    this.cache.findOne(filter, options, fn);
-  }
-
-  public name(): string {
-    return this.config.name;
-  }
-
-  public setSerializer(serializer: Serializer): void {
-    this.serializer = serializer;
-  }
-
-  public setCache(cache: Collection): void {
-    const events = [
-      'document-upserted',
-      'document-removed'
-    ];
-    events.forEach((event: string) => {
-      cache.on(event, (obj: any) => {
-        this.emit(event, obj);
-      });
-    });
-    this.cache = cache;
-  }
-
-  public setFileSystem(fileSys: FileSystem): void {
-    fileSys.on('file-added', (path: string) => {
-      this.update(path);
-    });
-    fileSys.on('file-changed', (path: string) => {
-      this.update(path);
-    });
-    fileSys.on('file-removed', (path: string) => {
-      // TODO: Remove document from cache.
-      return;
-    });
-    fileSys.on('ready', () => {
-      this.emit('ready');
-    });
-    this.fileSys = fileSys;
-    this.update(this.config.path);
+    }
+    this.storing = false;
   }
 
   private readFile(): Object {
     try {
-      return this.serializer.parse(this.fileSys.read(this.config.path));
+      return this.serializer.parse(this.fs.read(this.config.path));
     } catch (e) {
       return {};
-    }
-  }
-
-  private update(path: string): void {
-    if (path === this.config.path) {
-      if (!this.storing) {
-        let dict = this.readFile();
-        _.each(dict, (doc: any, id: string) => {
-          doc._id = id;
-          this.cache.upsert(doc, () => {
-            return;
-          });
-        });
-      } else {
-        this.storing = false;
-      }
     }
   }
 }

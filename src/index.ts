@@ -1,12 +1,12 @@
 import {component} from '@samizdatjs/tiamat';
 import {DatabaseReporter, FileSystemReporter, RequestReporter} from './reporters';
 
-export {FileSystem, file, directory, FileCollection, DirectoryCollection} from './fs';
+export {FileSystem, file, directory} from './fs';
 export {yaml} from './yaml';
 export {server, router, get, Server} from './server';
 export {ReadOnlyRestProvider} from './rest';
 
-import {FileSystemService, FileCollectionActivator, DirectoryCollectionActivator} from './fs';
+import {FileSystemService, FSCollectionManager} from './fs';
 import {ServerActivator} from './server';
 
 @component({
@@ -16,8 +16,7 @@ import {ServerActivator} from './server';
     DatabaseReporter,
     FileSystemReporter,
     RequestReporter,
-    FileCollectionActivator,
-    DirectoryCollectionActivator
+    FSCollectionManager
   ]
 })
 export class TashmetuServer {}

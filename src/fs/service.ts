@@ -12,7 +12,8 @@ import {FileSystem} from './interfaces';
 export class FileSystemService extends EventEmitter implements FileSystem {
   private root: string = join(process.cwd(), 'content');
 
-  public listen(): void {
+  public constructor() {
+    super();
     chokidar.watch(this.root, {
       ignoreInitial: true,
       persistent: true,

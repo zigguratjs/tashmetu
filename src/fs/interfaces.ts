@@ -2,8 +2,6 @@ import {Provider} from '@samizdatjs/tiamat';
 import {Serializer} from '@samizdatjs/tashmetu';
 
 export interface FileSystem {
-  listen(): void;
-
   readdir(path: string): string[];
   read(path: string): any;
   write(data: string, path: string): void;
@@ -43,3 +41,7 @@ export interface DirectoryConfig extends FileSystemCollectionConfig {
 
 
 export interface FileConfig extends FileSystemCollectionConfig {}
+
+export interface FSCollection {
+  update(path: string): void;
+}
