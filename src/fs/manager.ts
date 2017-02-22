@@ -1,6 +1,6 @@
 import {inject, service, Activator, Provider} from '@samizdatjs/tiamat';
 import {Collection, LocalDatabase, Serializer, CollectionBase} from '@samizdatjs/tashmetu';
-import {FileSystem, DirectoryConfig, FSCollection} from './interfaces';
+import {FileSystem, DirectoryConfig, FSStorageAdapter} from './interfaces';
 import {basename, dirname, join} from 'path';
 import {Directory} from './directory';
 import {File} from './file';
@@ -10,7 +10,7 @@ import {File} from './file';
   singleton: true
 })
 export class FSCollectionManager implements Activator<CollectionBase> {
-  private collections: {[name: string]: FSCollection} = {};
+  private collections: {[name: string]: FSStorageAdapter} = {};
   private storing = '';
 
   public constructor(
@@ -50,7 +50,7 @@ export class FSCollectionManager implements Activator<CollectionBase> {
     return obj;
   }
 
-  private getCollection(path: string): FSCollection {
+  private getCollection(path: string): FSStorageAdapter {
     if (path.indexOf('/') > 0) {
       return this.collections[basename(dirname(path))];
     } else {

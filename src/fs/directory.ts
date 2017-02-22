@@ -1,5 +1,5 @@
 import {Collection, Serializer} from '@samizdatjs/tashmetu';
-import {FileSystem, DirectoryConfig, FSCollection} from './interfaces';
+import {FileSystem, DirectoryConfig, FSStorageAdapter} from './interfaces';
 import {basename, dirname, join} from 'path';
 
 export function directory(config: DirectoryConfig): any {
@@ -13,7 +13,7 @@ export function directory(config: DirectoryConfig): any {
   };
 }
 
-export class Directory implements FSCollection {
+export class Directory implements FSStorageAdapter {
   public constructor(
     private collection: Collection,
     private serializer: Serializer,

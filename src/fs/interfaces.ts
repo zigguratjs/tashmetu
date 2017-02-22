@@ -42,6 +42,6 @@ export interface DirectoryConfig extends FileSystemCollectionConfig {
 
 export interface FileConfig extends FileSystemCollectionConfig {}
 
-export interface FSCollection {
+export interface FSStorageAdapter {
   update(path: string): void;
 }

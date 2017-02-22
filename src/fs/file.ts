@@ -1,5 +1,5 @@
 import {Collection, Serializer} from '@samizdatjs/tashmetu';
-import {FileSystem, FileConfig, FSCollection} from './interfaces';
+import {FileSystem, FileConfig, FSStorageAdapter} from './interfaces';
 import {each, intersection, difference, keys, isEqual, omit, pull, transform} from 'lodash';
 
 export function file(config: FileConfig): any {
@@ -13,7 +13,7 @@ export function file(config: FileConfig): any {
   };
 }
 
-export class File implements FSCollection {
+export class File implements FSStorageAdapter {
   private upsertQueue: string[] = [];
   private storing = false;
 
