@@ -2,7 +2,7 @@ import {Provider} from '@samizdatjs/tiamat';
 import {Serializer} from '@samizdatjs/tashmetu';
 import {YamlSerializer} from './serializer';
 import {YamlConfig} from './meta';
-import * as _ from 'lodash';
+import {merge} from 'lodash';
 
 const defaultOptions: YamlConfig = {
   frontMatter: false,
@@ -11,6 +11,6 @@ const defaultOptions: YamlConfig = {
 
 export function yaml(config?: YamlConfig) {
   return (provider: Provider): Serializer => {
-    return new YamlSerializer(_.merge({}, defaultOptions, config || {}));
+    return new YamlSerializer(merge({}, defaultOptions, config || {}));
   };
 }
