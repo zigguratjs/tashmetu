@@ -1,7 +1,11 @@
 import {Provider} from '@samizdatjs/tiamat';
 import * as express from 'express';
 
-export interface ServerConfig {
+export interface RouterConfig {
+  name: string;
+
+  mount?: string;
+
   routes?: any;
 
   middleware?: string[];

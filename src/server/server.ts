@@ -3,39 +3,12 @@ import {inject, injectable, service, Provider, Activator} from '@samizdatjs/tiam
 import {Middleware, RouterProvider} from './interfaces';
 
 @service({
-  name: 'tashmetu.ServerActivator',
+  name: 'tashmetu.Server',
   singleton: true
 })
-export class ServerActivator implements Activator<Server> {
+export class Server implements Activator<any> {
   @inject('tiamat.Provider') private provider: Provider;
 
-  public activate(server: Server): Server {
-    let config = Reflect.getOwnMetadata('tashmetu:server', server.constructor);
-    if (config.middleware) {
-      config.middleware.forEach((name: any) => {
-        let middleware = this.provider.get<Middleware>(name);
-        server.addMiddleware(middleware);
-      });
-    }
-    if (config.routes) {
-      for (let path in config.routes) {
-        if (config.routes[path]) {
-          if (config.routes[path] instanceof Function) {
-            server.app().use(path, config.routes[path]);
-          } else {
-            let router = config.routes[path].createRouter(this.provider);
-            server.addRouter(router, path);
-          }
-        }
-      }
-    }
-    server.addRouterMethods(server);
-    return server;
-  }
-}
-
-@injectable()
-export class Server {
   private expressApp: express.Application = express();
 
   public listen(port: number): void {
@@ -67,6 +40,30 @@ export class Server {
         router.get(metadata.path, handler);
       });
     }
+  }
+
+  public activate(router: any): any {
+    let config = Reflect.getOwnMetadata('tashmetu:router', router.constructor);
+    if (config.middleware) {
+      config.middleware.forEach((name: any) => {
+        let middleware = this.provider.get<Middleware>(name);
+        this.addMiddleware(middleware);
+      });
+    }
+    if (config.routes) {
+      for (let path in config.routes) {
+        if (config.routes[path]) {
+          if (config.routes[path] instanceof Function) {
+            this.expressApp.use(path, config.routes[path]);
+          } else {
+            let r = config.routes[path].createRouter(this.provider);
+            this.addRouter(r, path);
+          }
+        }
+      }
+    }
+    this.addRouterMethods(router);
+    return router;
   }
 
   private handlerFactory(controller: any, key: string): express.RequestHandler {

@@ -3,16 +3,16 @@ import {DatabaseReporter, FileSystemReporter, RequestReporter} from './reporters
 
 export {FileSystem, file, directory} from './fs';
 export {yaml} from './yaml';
-export {server, router, get, Server} from './server';
+export {Server, router, get} from './server';
 export {ReadOnlyRestProvider} from './rest';
 
 import {FileSystemService, FSCollectionManager} from './fs';
-import {ServerActivator} from './server';
+import {Server} from './server';
 
 @component({
   entities: [
     FileSystemService,
-    ServerActivator,
+    Server,
     DatabaseReporter,
     FileSystemReporter,
     RequestReporter,

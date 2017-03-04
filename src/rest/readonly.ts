@@ -8,15 +8,16 @@ export class ReadOnlyRestProvider implements RouterProvider {
 
   public createRouter(provider: Provider): any {
     let database = provider.get<Database>('tashmetu.Database');
-    return new ReadOnlyRestRouter(database.collection(this.collection));
+    return new ReadOnlyRestRouter(database, this.collection);
   }
 }
 
 class ReadOnlyRestRouter {
-  public constructor(private collection: Collection) {};
+  public constructor(private database: Database, private collection: string) {};
 
   @get('/')
   private getAll(req: express.Request, res: express.Response): void {
+    let collection = this.database.collection(this.collection);
     let selector = this.parseJson(req.query.selector);
     let options: any = {};
     if (req.query.limit) {
@@ -25,7 +26,7 @@ class ReadOnlyRestRouter {
     if (req.query.sort) {
       options.sort = this.parseJson(req.query.sort);
     }
-    this.collection.find(selector, options, (result: any) => {
+    collection.find(selector, options, (result: any) => {
       res.setHeader('Content-Type', 'application/json');
       res.send(result);
     });
@@ -33,7 +34,8 @@ class ReadOnlyRestRouter {
 
   @get('/:id')
   private getOne(req: express.Request, res: express.Response): void {
-    this.collection.findOne({_id: req.params.id}, {}, (result: any) => {
+    let collection = this.database.collection(this.collection);
+    collection.findOne({_id: req.params.id}, {}, (result: any) => {
       if (result) {
         res.setHeader('Content-Type', 'application/json');
         res.send(result);

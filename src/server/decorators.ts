@@ -1,19 +1,13 @@
-import {ServerConfig, RouterMethodMetadata, HandlerDecorator} from './interfaces';
+import {RouterConfig, RouterMethodMetadata, HandlerDecorator} from './interfaces';
 
-export function server(config: ServerConfig) {
+export function router(config: RouterConfig) {
   return function (target: any) {
     Reflect.defineMetadata('tiamat:service', {
-      name: 'tashmetu.Server',
+      name: config.name,
       singleton: true,
-      activator: 'tashmetu.ServerActivator'
+      activator: 'tashmetu.Server'
     }, target);
-    Reflect.defineMetadata('tashmetu:server', config, target);
-  };
-}
-
-export function router(name: string) {
-  return function (target: any) {
-    Reflect.defineMetadata('tiamat:service', {name}, target);
+    Reflect.defineMetadata('tashmetu:router', config, target);
   };
 }
 
