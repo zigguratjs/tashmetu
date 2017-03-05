@@ -1,11 +1,11 @@
-import {service, inject} from '@samizdatjs/tiamat';
+import {provider, inject} from '@samizdatjs/tiamat';
 import {Collection, Database, DocumentError} from '@samizdatjs/tashmetu';
 import * as chalk from 'chalk';
 
 let log = require('fancy-log');
 
-@service({
-  name: 'tashmetu.DatabaseReporter',
+@provider({
+  for: 'tashmetu.DatabaseReporter',
   singleton: true
 })
 export class DatabaseReporter {

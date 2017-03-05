@@ -1,11 +1,11 @@
-import {service, inject} from '@samizdatjs/tiamat';
+import {provider, inject} from '@samizdatjs/tiamat';
 import {FileSystem} from '../fs';
 import * as chalk from 'chalk';
 
 let log = require('fancy-log');
 
-@service({
-  name: 'tashmetu.FileSystemReporter',
+@provider({
+  for: 'tashmetu.FileSystemReporter',
   singleton: true
 })
 export class FileSystemReporter {

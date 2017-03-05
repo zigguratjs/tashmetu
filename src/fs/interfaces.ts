@@ -1,4 +1,4 @@
-import {Provider} from '@samizdatjs/tiamat';
+import {Injector} from '@samizdatjs/tiamat';
 import {Serializer} from '@samizdatjs/tashmetu';
 
 export interface FileSystem {
@@ -16,9 +16,9 @@ export interface FileSystem {
 
 export interface FileSystemCollectionConfig {
   /**
-   * Unique service identifier.
+   * The unique identifier that the class provides an implmentation for.
    */
-  name: string;
+  providerFor: string;
 
   /**
    * Path to file/directory.
@@ -29,7 +29,7 @@ export interface FileSystemCollectionConfig {
    * A serializer provider creating a serializer that will parse and serialize
    * documents when reading from and writing to the file system.
    */
-  serializer: (provider: Provider) => Serializer;
+  serializer: (injector: Injector) => Serializer;
 }
 
 export interface DirectoryConfig extends FileSystemCollectionConfig {

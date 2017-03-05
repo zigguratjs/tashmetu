@@ -1,12 +1,12 @@
-import {inject, service, Activator, Provider} from '@samizdatjs/tiamat';
+import {inject, provider, Activator, Injector} from '@samizdatjs/tiamat';
 import {Collection, LocalDatabase, Serializer, CollectionBase} from '@samizdatjs/tashmetu';
 import {FileSystem, DirectoryConfig, FSStorageAdapter} from './interfaces';
 import {basename, dirname, join} from 'path';
 import {Directory} from './directory';
 import {File} from './file';
 
-@service({
-  name: 'tashmetu.FSCollectionManager',
+@provider({
+  for: 'tashmetu.FSCollectionManager',
   singleton: true
 })
 export class FSCollectionManager implements Activator<CollectionBase> {
@@ -14,7 +14,7 @@ export class FSCollectionManager implements Activator<CollectionBase> {
   private storing = '';
 
   public constructor(
-    @inject('tiamat.Provider') private provider: Provider,
+    @inject('tiamat.Injector') private injector: Injector,
     @inject('tashmetu.LocalDatabase') private cache: LocalDatabase,
     @inject('tashmetu.FileSystem') private fs: FileSystem
   ) {
@@ -29,7 +29,7 @@ export class FSCollectionManager implements Activator<CollectionBase> {
   public activate(obj: CollectionBase): any {
     if (Reflect.hasOwnMetadata('tashmetu:directory', obj.constructor)) {
       let config = Reflect.getOwnMetadata('tashmetu:directory', obj.constructor);
-      let serializer = config.serializer(this.provider);
+      let serializer = config.serializer(this.injector);
       let cache = this.cache.createCollection(config.name);
 
       obj.setCollection(cache);
@@ -38,7 +38,7 @@ export class FSCollectionManager implements Activator<CollectionBase> {
         cache, serializer, this.fs, config);
     } else {
       let config = Reflect.getOwnMetadata('tashmetu:file', obj.constructor);
-      let serializer = config.serializer(this.provider);
+      let serializer = config.serializer(this.injector);
       let cache = this.cache.createCollection(config.name);
 
       obj.setCollection(cache);

@@ -10,7 +10,7 @@ import {FileSystemService, FSCollectionManager} from './fs';
 import {Server} from './server';
 
 @component({
-  entities: [
+  providers: [
     FileSystemService,
     Server,
     DatabaseReporter,

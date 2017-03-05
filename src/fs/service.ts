@@ -1,12 +1,12 @@
-import {service} from '@samizdatjs/tiamat';
+import {provider} from '@samizdatjs/tiamat';
 import fs = require('fs');
 import * as chokidar from 'chokidar';
 import {relative, join} from 'path';
 import {EventEmitter} from '@samizdatjs/tashmetu';
 import {FileSystem} from './interfaces';
 
-@service({
-  name: 'tashmetu.FileSystem',
+@provider({
+  for: 'tashmetu.FileSystem',
   singleton: true
 })
 export class FileSystemService extends EventEmitter implements FileSystem {

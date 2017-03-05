@@ -1,4 +1,4 @@
-import {Provider} from '@samizdatjs/tiamat';
+import {Injector} from '@samizdatjs/tiamat';
 import {Serializer} from '@samizdatjs/tashmetu';
 import {YamlSerializer} from './serializer';
 import {YamlConfig} from './meta';
@@ -10,7 +10,7 @@ const defaultOptions: YamlConfig = {
 };
 
 export function yaml(config?: YamlConfig) {
-  return (provider: Provider): Serializer => {
+  return (injector: Injector): Serializer => {
     return new YamlSerializer(merge({}, defaultOptions, config || {}));
   };
 }

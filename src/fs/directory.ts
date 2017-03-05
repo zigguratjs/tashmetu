@@ -4,8 +4,8 @@ import {basename, dirname, join} from 'path';
 
 export function directory(config: DirectoryConfig): any {
   return function (target: any) {
-    Reflect.defineMetadata('tiamat:service', {
-      name: config.name,
+    Reflect.defineMetadata('tiamat:provider', {
+      for: config.providerFor,
       singleton: true,
       activator: 'tashmetu.FSCollectionManager'
     }, target);

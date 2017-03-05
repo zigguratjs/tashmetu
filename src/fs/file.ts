@@ -4,8 +4,8 @@ import {each, intersection, difference, keys, isEqual, omit, pull, transform} fr
 
 export function file(config: FileConfig): any {
   return function (target: any) {
-    Reflect.defineMetadata('tiamat:service', {
-      name: config.name,
+    Reflect.defineMetadata('tiamat:provider', {
+      for: config.providerFor,
       singleton: true,
       activator: 'tashmetu.FSCollectionManager'
     }, target);

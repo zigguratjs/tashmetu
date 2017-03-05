@@ -1,8 +1,8 @@
-import {Provider} from '@samizdatjs/tiamat';
+import {Injector} from '@samizdatjs/tiamat';
 import * as express from 'express';
 
 export interface RouterConfig {
-  name: string;
+  providerFor: string;
 
   mount?: string;
 
@@ -33,5 +33,5 @@ export interface Middleware {
  *
  */
 export interface RouterProvider {
-  createRouter(provider: Provider): any;
+  createRouter(injector: Injector): any;
 }

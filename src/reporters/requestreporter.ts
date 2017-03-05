@@ -1,13 +1,13 @@
 import * as express from 'express';
-import {service} from '@samizdatjs/tiamat';
+import {provider} from '@samizdatjs/tiamat';
 import {Middleware} from '../server';
 
 let onHeaders = require('on-headers');
 let chalk = require('chalk');
 let log = require('fancy-log');
 
-@service({
-  name: 'tashmetu.RequestReporter',
+@provider({
+  for: 'tashmetu.RequestReporter',
   singleton: true
 })
 export class RequestReporter implements Middleware {

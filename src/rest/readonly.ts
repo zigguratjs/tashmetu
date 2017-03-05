@@ -1,4 +1,4 @@
-import {Provider} from '@samizdatjs/tiamat';
+import {Injector} from '@samizdatjs/tiamat';
 import {Collection, Database} from '@samizdatjs/tashmetu';
 import {get, RouterProvider} from '../server';
 import * as express from 'express';
@@ -6,8 +6,8 @@ import * as express from 'express';
 export class ReadOnlyRestProvider implements RouterProvider {
   public constructor(private collection: string) {};
 
-  public createRouter(provider: Provider): any {
-    let database = provider.get<Database>('tashmetu.Database');
+  public createRouter(injector: Injector): any {
+    let database = injector.get<Database>('tashmetu.Database');
     return new ReadOnlyRestRouter(database, this.collection);
   }
 }

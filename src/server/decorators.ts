@@ -2,8 +2,8 @@ import {RouterConfig, RouterMethodMetadata, HandlerDecorator} from './interfaces
 
 export function router(config: RouterConfig) {
   return function (target: any) {
-    Reflect.defineMetadata('tiamat:service', {
-      name: config.name,
+    Reflect.defineMetadata('tiamat:provider', {
+      for: config.providerFor,
       singleton: true,
       activator: 'tashmetu.Server'
     }, target);
