@@ -1,6 +1,6 @@
 import * as express from 'express';
 import {inject, provider, Injector, Activator} from '@samizdatjs/tiamat';
-import {Middleware, RouterProvider} from './interfaces';
+import {Middleware, MiddlewareConfig, RouterProvider} from './interfaces';
 
 @provider({
   for: 'tashmetu.Server',
@@ -9,28 +9,24 @@ import {Middleware, RouterProvider} from './interfaces';
 export class Server implements Activator<any> {
   @inject('tiamat.Injector') private injector: Injector;
 
-  private expressApp: express.Application = express();
+  private _app: express.Application = express();
 
   public listen(port: number): void {
-    this.expressApp.listen(port);
+    this._app.listen(port);
   }
 
   public app(): express.Application {
-    return this.expressApp;
-  }
-
-  public addMiddleware(controller: Middleware): void {
-    this.expressApp.use(controller.apply);
+    return this._app;
   }
 
   public addRouter(controller: any, path: string): void {
     let router: express.Router = express.Router();
     this.addRouterMethods(controller, router);
-    this.expressApp.use(path, router);
+    this._app.use(path, router);
   }
 
   public addRouterMethods(entity: any, _router?: express.Router) {
-    let router = _router || this.expressApp;
+    let router = _router || this._app;
     let methodMetadata = Reflect.getOwnMetadata(
       'tashmetu:router-method', entity.constructor
     );
@@ -45,16 +41,15 @@ export class Server implements Activator<any> {
   public activate(router: any): any {
     let config = Reflect.getOwnMetadata('tashmetu:router', router.constructor);
     if (config.middleware) {
-      config.middleware.forEach((name: any) => {
-        let middleware = this.injector.get<Middleware>(name);
-        this.addMiddleware(middleware);
+      config.middleware.forEach((middlewareConfig: MiddlewareConfig) => {
+        this.addMiddleware(middlewareConfig);
       });
     }
     if (config.routes) {
       for (let path in config.routes) {
         if (config.routes[path]) {
           if (config.routes[path] instanceof Function) {
-            this.expressApp.use(path, config.routes[path]);
+            this._app.use(path, config.routes[path]);
           } else {
             let r = config.routes[path].createRouter(this.injector);
             this.addRouter(r, path);
@@ -64,6 +59,19 @@ export class Server implements Activator<any> {
     }
     this.addRouterMethods(router);
     return router;
+  }
+
+  private addMiddleware(config: MiddlewareConfig): void {
+    if (config.provider) {
+      if (typeof config.provider === 'string') {
+        let middleware = this.injector.get<Middleware>(config.provider);
+        this._app.use(middleware.apply);
+      } else {
+        // TODO: Handle middleware provider function.
+      }
+    } else if (config.handler) {
+      this._app.use(config.path, config.handler);
+    }
   }
 
   private handlerFactory(controller: any, key: string): express.RequestHandler {

@@ -1,6 +1,14 @@
 import {Injector} from '@samizdatjs/tiamat';
 import * as express from 'express';
 
+export interface MiddlewareConfig {
+  path: string;
+
+  handler?: express.RequestHandler;
+
+  provider?: string | Function;
+}
+
 export interface RouterConfig {
   providerFor: string;
 
@@ -8,7 +16,7 @@ export interface RouterConfig {
 
   routes?: any;
 
-  middleware?: string[];
+  middleware?: MiddlewareConfig[];
 }
 
 export interface RouterMetadata {
