@@ -1,4 +1,4 @@
-import {RouterConfig, RouterMethodMetadata, HandlerDecorator} from './interfaces';
+import {RouterConfig, RouterMethodMetadata, RouterMethodConfig, HandlerDecorator} from './interfaces';
 
 export function router(config: RouterConfig) {
   return function (target: any) {
@@ -11,13 +11,13 @@ export function router(config: RouterConfig) {
   };
 }
 
-export function get(path: string): HandlerDecorator {
-  return method('get', path);
+export function get(config: RouterMethodConfig): HandlerDecorator {
+  return method('get', config);
 }
 
-function method(method: string, path: string): HandlerDecorator {
+function method(method: string, config: RouterMethodConfig): HandlerDecorator {
   return function (target: any, key: string, value: any) {
-    let metadata: RouterMethodMetadata = {path, method, target, key};
+    let metadata: RouterMethodMetadata = {method, config, target, key};
     let metadataList: RouterMethodMetadata[] = [];
 
     if (!Reflect.hasOwnMetadata('tashmetu:router-method', target.constructor)) {

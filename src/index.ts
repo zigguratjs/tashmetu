@@ -1,10 +1,11 @@
 import {component} from '@samizdatjs/tiamat';
-import {DatabaseReporter, FileSystemReporter, RequestReporter} from './reporters';
+import {DatabaseReporter, FileSystemReporter} from './reporters';
 
 export {FileSystem, file, directory} from './fs';
 export {yaml} from './yaml';
-export {Server, router, get} from './server';
+export {Server, MiddlewareProvider, router, get} from './server';
 export {ReadOnlyRestProvider} from './rest';
+export {requestReporter} from './reporters';
 
 import {FileSystemService, FSCollectionManager} from './fs';
 import {Server} from './server';
@@ -15,7 +16,6 @@ import {Server} from './server';
     Server,
     DatabaseReporter,
     FileSystemReporter,
-    RequestReporter,
     FSCollectionManager
   ]
 })

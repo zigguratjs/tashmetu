@@ -15,7 +15,7 @@ export class ReadOnlyRestProvider implements RouterProvider {
 class ReadOnlyRestRouter {
   public constructor(private database: Database, private collection: string) {};
 
-  @get('/')
+  @get({path: '/'})
   private getAll(req: express.Request, res: express.Response): void {
     let collection = this.database.collection(this.collection);
     let selector = this.parseJson(req.query.selector);
@@ -32,7 +32,7 @@ class ReadOnlyRestRouter {
     });
   }
 
-  @get('/:id')
+  @get({path: '/:id'})
   private getOne(req: express.Request, res: express.Response): void {
     let collection = this.database.collection(this.collection);
     collection.findOne({_id: req.params.id}, {}, (result: any) => {

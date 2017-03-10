@@ -1,6 +1,6 @@
 import * as express from 'express';
 import {inject, provider, Injector, Activator} from '@samizdatjs/tiamat';
-import {Middleware, MiddlewareConfig, RouterProvider} from './interfaces';
+import {MiddlewareConfig} from './interfaces';
 
 @provider({
   for: 'tashmetu.Server',
@@ -17,25 +17,6 @@ export class Server implements Activator<any> {
 
   public app(): express.Application {
     return this._app;
-  }
-
-  public addRouter(controller: any, path: string): void {
-    let router: express.Router = express.Router();
-    this.addRouterMethods(controller, router);
-    this._app.use(path, router);
-  }
-
-  public addRouterMethods(entity: any, _router?: express.Router) {
-    let router = _router || this._app;
-    let methodMetadata = Reflect.getOwnMetadata(
-      'tashmetu:router-method', entity.constructor
-    );
-    if (methodMetadata) {
-      methodMetadata.forEach((metadata: any) => {
-        let handler: express.RequestHandler = this.handlerFactory(entity, metadata.key);
-        router.get(metadata.path, handler);
-      });
-    }
   }
 
   public activate(router: any): any {
@@ -61,16 +42,42 @@ export class Server implements Activator<any> {
     return router;
   }
 
+  private addRouter(controller: any, path: string): void {
+    let router: express.Router = express.Router();
+    this.addRouterMethods(controller, router);
+    this._app.use(path, router);
+  }
+
+  private addRouterMethods(entity: any, _router?: express.Router) {
+    let router = _router || this._app;
+    let methodMetadata = Reflect.getOwnMetadata(
+      'tashmetu:router-method', entity.constructor
+    );
+    let middlewareMetadata = Reflect.getOwnMetadata(
+      'tashmetu:router-middleware', entity.constructor
+    );
+    if (methodMetadata) {
+      methodMetadata.forEach((metadata: any) => {
+        if (metadata.config.middleware) {
+          metadata.config.middleware.forEach((mw: any) => {
+            router.get(metadata.config.path, this.createHandler(mw));
+          });
+        }
+        let handler: express.RequestHandler = this.handlerFactory(entity, metadata.key);
+        router.get(metadata.config.path, handler);
+      });
+    }
+  }
+
   private addMiddleware(config: MiddlewareConfig): void {
-    if (config.provider) {
-      if (typeof config.provider === 'string') {
-        let middleware = this.injector.get<Middleware>(config.provider);
-        this._app.use(middleware.apply);
-      } else {
-        // TODO: Handle middleware provider function.
-      }
-    } else if (config.handler) {
-      this._app.use(config.path, config.handler);
+    this._app.use(config.path, this.createHandler(config));
+  }
+
+  private createHandler(mw: any): express.RequestHandler {
+    if (mw.handler) {
+      return mw.handler;
+    } else {
+      return mw.provider(this.injector);
     }
   }
 
