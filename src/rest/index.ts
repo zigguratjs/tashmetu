@@ -1,1 +1,1 @@
-export {ReadOnlyRestProvider} from './readonly';
+export {readOnly} from './readonly';

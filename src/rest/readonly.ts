@@ -3,13 +3,11 @@ import {Collection, Database} from '@samizdatjs/tashmetu';
 import {get, RouterProvider} from '../server';
 import * as express from 'express';
 
-export class ReadOnlyRestProvider implements RouterProvider {
-  public constructor(private collection: string) {};
-
-  public createRouter(injector: Injector): any {
+export function readOnly(collection: string): RouterProvider {
+  return function(injector: Injector): any {
     let database = injector.get<Database>('tashmetu.Database');
-    return new ReadOnlyRestRouter(database, this.collection);
-  }
+    return new ReadOnlyRestRouter(database, collection);
+  };
 }
 
 class ReadOnlyRestRouter {

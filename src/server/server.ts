@@ -27,16 +27,9 @@ export class Server implements Activator<any> {
       });
     }
     if (config.routes) {
-      for (let path in config.routes) {
-        if (config.routes[path]) {
-          if (config.routes[path] instanceof Function) {
-            this._app.use(path, config.routes[path]);
-          } else {
-            let r = config.routes[path].createRouter(this.injector);
-            this.addRouter(r, path);
-          }
-        }
-      }
+      config.routes.forEach((route: any) => {
+        this.addRouter(route.provider(this.injector), route.path);
+      });
     }
     this.addRouterMethods(router);
     return router;
