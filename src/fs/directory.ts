@@ -22,16 +22,12 @@ export class Directory implements FSStorageAdapter {
   ) {
     fs.readdir(config.path).forEach((name: string) => {
       let doc = this.loadPath(join(config.path, name));
-      collection.upsert(doc, () => {
-        return;
-      });
+      collection.upsert(doc);
     });
   }
 
   public update(path: string): void {
-    this.collection.upsert(this.loadPath(path), () => {
-      return;
-    });
+    this.collection.upsert(this.loadPath(path));
   }
 
   private loadPath(path: string): any {

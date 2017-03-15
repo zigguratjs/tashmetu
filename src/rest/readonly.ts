@@ -24,7 +24,7 @@ class ReadOnlyRestRouter {
     if (req.query.sort) {
       options.sort = this.parseJson(req.query.sort);
     }
-    collection.find(selector, options, (result: any) => {
+    collection.find(selector, options).then((result: any) => {
       res.setHeader('Content-Type', 'application/json');
       res.send(result);
     });
@@ -33,7 +33,7 @@ class ReadOnlyRestRouter {
   @get({path: '/:id'})
   private getOne(req: express.Request, res: express.Response): void {
     let collection = this.database.collection(this.collection);
-    collection.findOne({_id: req.params.id}, {}, (result: any) => {
+    collection.findOne({_id: req.params.id}, {}).then((result: any) => {
       if (result) {
         res.setHeader('Content-Type', 'application/json');
         res.send(result);

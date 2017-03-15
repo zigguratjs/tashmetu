@@ -46,9 +46,7 @@ export class File implements FSStorageAdapter {
         each(comp.update, (doc: any, id: string) => {
           doc._id = id;
           this.upsertQueue.push(id);
-          this.collection.upsert(doc, () => {
-            return;
-          });
+          this.collection.upsert(doc);
         });
 
         // TODO: Remove items from comp.remove
@@ -77,12 +75,13 @@ export class File implements FSStorageAdapter {
   }
 
   private fetchCachedDict(fn: (dict: any) => void): void {
-    this.collection.find({}, {}, (docs: any) => {
-      let dict = transform(docs, (result: any, obj: any) => {
-        result[obj._id] = omit(obj, ['_id', '_collection', '$loki', 'meta']);
-      }, {});
-      fn(dict);
-    });
+    this.collection.find({}, {})
+      .then((docs: any[]) => {
+        let dict = transform(docs, (result: any, obj: any) => {
+          result[obj._id] = omit(obj, ['_id', '_collection', '$loki', 'meta']);
+        }, {});
+        fn(dict);
+      });
   }
 
   private readFile(): Object {
