@@ -7,7 +7,7 @@ export function file(config: FileConfig): any {
     Reflect.defineMetadata('tiamat:provider', {
       for: config.providerFor,
       singleton: true,
-      activator: 'tashmetu.FSCollectionManager'
+      tagged: ['tashmetu.File']
     }, target);
     Reflect.defineMetadata('tashmetu:file', config, target);
   };

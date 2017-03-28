@@ -1,4 +1,4 @@
-import {inject, provider, Activator, Injector} from '@samizdatjs/tiamat';
+import {inject, provider, activate, Injector} from '@samizdatjs/tiamat';
 import {Collection, LocalDatabase, Serializer, CollectionBase} from '@samizdatjs/tashmetu';
 import {FileSystem, DirectoryConfig, FSStorageAdapter} from './interfaces';
 import {basename, dirname, join} from 'path';
@@ -9,7 +9,7 @@ import {File} from './file';
   for: 'tashmetu.FSCollectionManager',
   singleton: true
 })
-export class FSCollectionManager implements Activator<CollectionBase> {
+export class FSCollectionManager {
   private collections: {[name: string]: FSStorageAdapter} = {};
   private storing = '';
 
@@ -26,26 +26,30 @@ export class FSCollectionManager implements Activator<CollectionBase> {
     });
   }
 
-  public activate(obj: CollectionBase): any {
-    if (Reflect.hasOwnMetadata('tashmetu:directory', obj.constructor)) {
-      let config = Reflect.getOwnMetadata('tashmetu:directory', obj.constructor);
-      let serializer = config.serializer(this.injector);
-      let cache = this.cache.createCollection(config.name);
+  @activate('tashmetu.Directory')
+  public activateDirectory(obj: CollectionBase): CollectionBase {
+    let config = Reflect.getOwnMetadata('tashmetu:directory', obj.constructor);
+    let serializer = config.serializer(this.injector);
+    let cache = this.cache.createCollection(config.name);
 
-      obj.setCollection(cache);
+    obj.setCollection(cache);
 
-      this.collections[config.path] = new Directory(
-        cache, serializer, this.fs, config);
-    } else {
-      let config = Reflect.getOwnMetadata('tashmetu:file', obj.constructor);
-      let serializer = config.serializer(this.injector);
-      let cache = this.cache.createCollection(config.name);
+    this.collections[config.path] = new Directory(
+      cache, serializer, this.fs, config);
 
-      obj.setCollection(cache);
+    return obj;
+  }
 
-      this.collections[config.path] = new File(
-        cache, serializer, this.fs, config);
-    }
+  @activate('tashmetu.File')
+  public activateFile(obj: CollectionBase): CollectionBase {
+    let config = Reflect.getOwnMetadata('tashmetu:file', obj.constructor);
+    let serializer = config.serializer(this.injector);
+    let cache = this.cache.createCollection(config.name);
+
+    obj.setCollection(cache);
+
+    this.collections[config.path] = new File(
+      cache, serializer, this.fs, config);
 
     return obj;
   }

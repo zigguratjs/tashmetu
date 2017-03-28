@@ -5,7 +5,7 @@ export function router(config: RouterConfig) {
     Reflect.defineMetadata('tiamat:provider', {
       for: config.providerFor,
       singleton: true,
-      activator: 'tashmetu.Server'
+      tagged: ['tashmetu.Router']
     }, target);
     Reflect.defineMetadata('tashmetu:router', config, target);
   };

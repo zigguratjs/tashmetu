@@ -1,12 +1,12 @@
 import * as express from 'express';
-import {inject, provider, Injector, Activator} from '@samizdatjs/tiamat';
+import {inject, provider, activate, Injector} from '@samizdatjs/tiamat';
 import {MiddlewareConfig} from './interfaces';
 
 @provider({
   for: 'tashmetu.Server',
   singleton: true
 })
-export class Server implements Activator<any> {
+export class Server {
   @inject('tiamat.Injector') private injector: Injector;
 
   private _app: express.Application = express();
@@ -19,6 +19,7 @@ export class Server implements Activator<any> {
     return this._app;
   }
 
+  @activate('tashmetu.Router')
   public activate(router: any): any {
     let config = Reflect.getOwnMetadata('tashmetu:router', router.constructor);
     if (config.middleware) {

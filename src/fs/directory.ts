@@ -7,7 +7,7 @@ export function directory(config: DirectoryConfig): any {
     Reflect.defineMetadata('tiamat:provider', {
       for: config.providerFor,
       singleton: true,
-      activator: 'tashmetu.FSCollectionManager'
+      tagged: ['tashmetu.Directory']
     }, target);
     Reflect.defineMetadata('tashmetu:directory', config, target);
   };
