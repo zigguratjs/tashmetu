@@ -1,6 +1,6 @@
 import {inject, provider, activate, Injector} from '@samizdatjs/tiamat';
 import {Collection, LocalDatabase, Serializer, CollectionBase} from '@samizdatjs/tashmetu';
-import {FileSystem, DirectoryConfig, FSStorageAdapter} from './interfaces';
+import {FileSystem, FSStorageAdapter} from './interfaces';
 import {basename, dirname, join} from 'path';
 import {Directory} from './directory';
 import {File} from './file';

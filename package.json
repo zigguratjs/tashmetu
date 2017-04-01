@@ -10,8 +10,8 @@
   "author": "Björn Andersson",
   "license": "MIT",
   "dependencies": {
-    "@samizdatjs/tashmetu": "^0.12.13",
-    "@samizdatjs/tiamat": "^0.3.2",
+    "@samizdatjs/tashmetu": "^0.12.15",
+    "@samizdatjs/tiamat": "^0.3.5",
     "@types/async": "^2.0.37",
     "@types/chalk": "^0.4.31",
     "@types/chokidar": "^1.4.30",

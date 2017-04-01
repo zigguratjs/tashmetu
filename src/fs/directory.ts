@@ -1,17 +1,7 @@
 import {Collection, Serializer} from '@samizdatjs/tashmetu';
-import {FileSystem, DirectoryConfig, FSStorageAdapter} from './interfaces';
+import {FileSystem, FSStorageAdapter} from './interfaces';
+import {DirectoryConfig} from './decorators';
 import {basename, dirname, join} from 'path';
-
-export function directory(config: DirectoryConfig): any {
-  return function (target: any) {
-    Reflect.defineMetadata('tiamat:provider', {
-      for: config.providerFor,
-      singleton: true,
-      tagged: ['tashmetu.Directory']
-    }, target);
-    Reflect.defineMetadata('tashmetu:directory', config, target);
-  };
-}
 
 export class Directory implements FSStorageAdapter {
   public constructor(

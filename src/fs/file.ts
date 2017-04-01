@@ -1,17 +1,7 @@
 import {Collection, Serializer} from '@samizdatjs/tashmetu';
-import {FileSystem, FileConfig, FSStorageAdapter} from './interfaces';
+import {FileSystem, FSStorageAdapter} from './interfaces';
+import {FileConfig} from './decorators';
 import {each, intersection, difference, keys, isEqual, omit, pull, transform} from 'lodash';
-
-export function file(config: FileConfig): any {
-  return function (target: any) {
-    Reflect.defineMetadata('tiamat:provider', {
-      for: config.providerFor,
-      singleton: true,
-      tagged: ['tashmetu.File']
-    }, target);
-    Reflect.defineMetadata('tashmetu:file', config, target);
-  };
-}
 
 export class File implements FSStorageAdapter {
   private upsertQueue: string[] = [];
