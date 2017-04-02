@@ -1,31 +1,52 @@
-import {RouterConfig, RouterMethodMetadata, RouterMethodConfig, HandlerDecorator} from './interfaces';
+import {classDecorator, propertyDecorator, Injector, PropertyMeta, PropertyMetaWriter} from '@samizdatjs/tiamat';
+import {ProviderFor, ProviderMetaWriter} from '@samizdatjs/tashmetu';
+import * as express from 'express';
 
-export function router(config: RouterConfig) {
-  return function (target: any) {
-    Reflect.defineMetadata('tiamat:provider', {
-      for: config.providerFor,
-      singleton: true,
-      tagged: ['tashmetu.Router']
-    }, target);
-    Reflect.defineMetadata('tashmetu:router', config, target);
-  };
+export type MiddlewareProvider = (injector: Injector) => express.RequestHandler;
+export type RouterProvider = (injector: Injector) => any;
+
+export interface MiddlewareConfig {
+  path: string;
+
+  handler?: express.RequestHandler;
+
+  provider?: string | MiddlewareProvider;
 }
 
-export function get(config: RouterMethodConfig): HandlerDecorator {
-  return method('get', config);
+export interface RouterConfig extends ProviderFor {
+  mount?: string;
+
+  routes?: any[]; // TODO: Type
+
+  middleware?: MiddlewareConfig[];
 }
 
-function method(method: string, config: RouterMethodConfig): HandlerDecorator {
-  return function (target: any, key: string, value: any) {
-    let metadata: RouterMethodMetadata = {method, config, target, key};
-    let metadataList: RouterMethodMetadata[] = [];
+export const router = classDecorator<RouterConfig>(
+  new ProviderMetaWriter('tashmetu:router', ['tashmetu.Router']), {
+    routes: [],
+    middleware: [],
+  });
 
-    if (!Reflect.hasOwnMetadata('tashmetu:router-method', target.constructor)) {
-        Reflect.defineMetadata('tashmetu:router-method', metadataList, target.constructor);
-    } else {
-        metadataList = Reflect.getOwnMetadata('tashmetu:router-method', target.constructor);
-    }
+export interface RouterMethodConfig {
+  path: string;
 
-    metadataList.push(metadata);
-  };
+  middleware?: any; // TODO: Type
 }
+
+export interface RouterMethodMeta extends PropertyMeta<RouterMethodConfig> {
+  method: string;
+}
+
+export class RouterMethodMetaWriter extends PropertyMetaWriter<RouterMethodConfig> {
+  public constructor(private method: string) {
+    super();
+  }
+
+  public write(data: RouterMethodConfig, target: any, key: string) {
+    let meta: RouterMethodMeta = {target, key, method: this.method, data};
+    this.append('tashmetu:router-method', meta, target.constructor);
+  }
+}
+
+export const get = propertyDecorator<RouterMethodConfig>(
+  new RouterMethodMetaWriter('get'));

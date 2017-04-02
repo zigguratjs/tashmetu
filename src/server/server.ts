@@ -1,6 +1,6 @@
 import * as express from 'express';
 import {inject, provider, activate, Injector} from '@samizdatjs/tiamat';
-import {MiddlewareConfig} from './interfaces';
+import {MiddlewareConfig, RouterConfig, RouterMethodMeta} from './decorators';
 
 @provider({
   for: 'tashmetu.Server',
@@ -21,7 +21,8 @@ export class Server {
 
   @activate('tashmetu.Router')
   public activate(router: any): any {
-    let config = Reflect.getOwnMetadata('tashmetu:router', router.constructor);
+    let config: RouterConfig = Reflect.getOwnMetadata(
+      'tashmetu:router', router.constructor);
     if (config.middleware) {
       config.middleware.forEach((middlewareConfig: MiddlewareConfig) => {
         this.addMiddleware(middlewareConfig);
@@ -44,23 +45,17 @@ export class Server {
 
   private addRouterMethods(entity: any, _router?: express.Router) {
     let router = _router || this._app;
-    let methodMetadata = Reflect.getOwnMetadata(
-      'tashmetu:router-method', entity.constructor
-    );
-    let middlewareMetadata = Reflect.getOwnMetadata(
-      'tashmetu:router-middleware', entity.constructor
-    );
-    if (methodMetadata) {
-      methodMetadata.forEach((metadata: any) => {
-        if (metadata.config.middleware) {
-          metadata.config.middleware.forEach((mw: any) => {
-            router.get(metadata.config.path, this.createHandler(mw));
-          });
-        }
-        let handler: express.RequestHandler = this.handlerFactory(entity, metadata.key);
-        router.get(metadata.config.path, handler);
-      });
-    }
+    let methods: RouterMethodMeta[] = Reflect.getOwnMetadata(
+      'tashmetu:router-method', entity.constructor) || [];
+    methods.forEach((metadata: any) => {
+      if (metadata.data.middleware) {
+        metadata.data.middleware.forEach((mw: any) => {
+          router.get(metadata.data.path, this.createHandler(mw));
+        });
+      }
+      let handler: express.RequestHandler = this.handlerFactory(entity, metadata.key);
+      router.get(metadata.data.path, handler);
+    });
   }
 
   private addMiddleware(config: MiddlewareConfig): void {
