@@ -1,5 +1,5 @@
-import {classDecorator, propertyDecorator, Injector, PropertyMeta, PropertyMetaWriter} from '@samizdatjs/tiamat';
-import {ProviderFor, ProviderMetaWriter} from '@samizdatjs/tashmetu';
+import {classDecorator, propertyDecorator, Injector, PropertyMeta, PropertyDecorator} from '@samizdatjs/tiamat';
+import {ProviderFor, ProviderDecorator} from '@samizdatjs/tashmetu';
 import * as express from 'express';
 
 export type MiddlewareProvider = (injector: Injector) => express.RequestHandler;
@@ -22,7 +22,7 @@ export interface RouterConfig extends ProviderFor {
 }
 
 export const router = classDecorator<RouterConfig>(
-  new ProviderMetaWriter('tashmetu:router', ['tashmetu.Router']), {
+  new ProviderDecorator('tashmetu:router', ['tashmetu.Router']), {
     routes: [],
     middleware: [],
   });
@@ -37,16 +37,16 @@ export interface RouterMethodMeta extends PropertyMeta<RouterMethodConfig> {
   method: string;
 }
 
-export class RouterMethodMetaWriter extends PropertyMetaWriter<RouterMethodConfig> {
+export class RouterMethodDecorator extends PropertyDecorator<RouterMethodConfig> {
   public constructor(private method: string) {
     super();
   }
 
-  public write(data: RouterMethodConfig, target: any, key: string) {
+  public decorate(data: RouterMethodConfig, target: any, key: string) {
     let meta: RouterMethodMeta = {target, key, method: this.method, data};
-    this.append('tashmetu:router-method', meta, target.constructor);
+    this.appendMeta('tashmetu:router-method', meta, target.constructor);
   }
 }
 
 export const get = propertyDecorator<RouterMethodConfig>(
-  new RouterMethodMetaWriter('get'));
+  new RouterMethodDecorator('get'));

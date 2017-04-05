@@ -1,5 +1,5 @@
 import {classDecorator, propertyDecorator, Injector} from '@samizdatjs/tiamat';
-import {Serializer, ProviderFor, ProviderMetaWriter} from '@samizdatjs/tashmetu';
+import {Serializer, ProviderFor, ProviderDecorator} from '@samizdatjs/tashmetu';
 
 export interface FileSystemCollectionConfig extends ProviderFor {
   /**
@@ -22,9 +22,9 @@ export interface DirectoryConfig extends FileSystemCollectionConfig {
 }
 
 export const directory = classDecorator<DirectoryConfig>(
-  new ProviderMetaWriter('tashmetu:directory', ['tashmetu.Directory']));
+  new ProviderDecorator('tashmetu:directory', ['tashmetu.Directory']));
 
 export interface FileConfig extends FileSystemCollectionConfig {}
 
 export const file = classDecorator<FileConfig>(
-  new ProviderMetaWriter('tashmetu:file', ['tashmetu.File']));
+  new ProviderDecorator('tashmetu:file', ['tashmetu.File']));
