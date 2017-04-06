@@ -1,5 +1,5 @@
 import {classDecorator, propertyDecorator, Injector, PropertyMeta, PropertyDecorator} from '@samizdatjs/tiamat';
-import {ProviderFor, ProviderDecorator} from '@samizdatjs/tashmetu';
+import {TaggedClassAnnotation} from '@samizdatjs/tashmetu';
 import * as express from 'express';
 
 export type MiddlewareProvider = (injector: Injector) => express.RequestHandler;
@@ -13,7 +13,7 @@ export interface MiddlewareConfig {
   provider?: string | MiddlewareProvider;
 }
 
-export interface RouterConfig extends ProviderFor {
+export interface RouterConfig {
   mount?: string;
 
   routes?: any[]; // TODO: Type
@@ -22,7 +22,7 @@ export interface RouterConfig extends ProviderFor {
 }
 
 export const router = classDecorator<RouterConfig>(
-  new ProviderDecorator('tashmetu:router', ['tashmetu.Router']), {
+  new TaggedClassAnnotation('tashmetu:router', ['tashmetu.Router']), {
     routes: [],
     middleware: [],
   });

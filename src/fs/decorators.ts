@@ -1,7 +1,7 @@
 import {classDecorator, propertyDecorator, Injector} from '@samizdatjs/tiamat';
-import {Serializer, ProviderFor, ProviderDecorator} from '@samizdatjs/tashmetu';
+import {Serializer, TaggedClassAnnotation} from '@samizdatjs/tashmetu';
 
-export interface FileSystemCollectionConfig extends ProviderFor {
+export interface FileSystemCollectionConfig {
   /**
    * Path to file/directory.
    */
@@ -22,9 +22,9 @@ export interface DirectoryConfig extends FileSystemCollectionConfig {
 }
 
 export const directory = classDecorator<DirectoryConfig>(
-  new ProviderDecorator('tashmetu:directory', ['tashmetu.Directory']));
+  new TaggedClassAnnotation('tashmetu:directory', ['tashmetu.Directory']));
 
 export interface FileConfig extends FileSystemCollectionConfig {}
 
 export const file = classDecorator<FileConfig>(
-  new ProviderDecorator('tashmetu:file', ['tashmetu.File']));
+  new TaggedClassAnnotation('tashmetu:file', ['tashmetu.File']));
