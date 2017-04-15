@@ -30,11 +30,19 @@ export class Server {
     }
     if (config.routes) {
       config.routes.forEach((route: any) => {
-        this.addRouter(route.provider(this.injector), route.path);
+        this.addRouter(this.getProviderInstance(route.provider), route.path);
       });
     }
     this.addRouterMethods(router);
     return router;
+  }
+
+  private getProviderInstance(provider: string | Function): any {
+    if (typeof provider === 'string') {
+      return this.injector.get(provider);
+    } else {
+      return provider(this.injector);
+    }
   }
 
   private addRouter(controller: any, path: string): void {
