@@ -65,7 +65,7 @@ export class File implements FSStorageAdapter {
   }
 
   private fetchCachedDict(fn: (dict: any) => void): void {
-    this.collection.find({}, {})
+    this.collection.find()
       .then((docs: any[]) => {
         let dict = transform(docs, (result: any, obj: any) => {
           result[obj._id] = omit(obj, ['_id', '_collection', '$loki', 'meta']);

@@ -33,7 +33,7 @@ class ReadOnlyRestRouter {
   @get({path: '/:id'})
   private getOne(req: express.Request, res: express.Response): void {
     let collection = this.database.collection(this.collection);
-    collection.findOne({_id: req.params.id}, {}).then((result: any) => {
+    collection.findOne({_id: req.params.id}).then((result: any) => {
       if (result) {
         res.setHeader('Content-Type', 'application/json');
         res.send(result);
