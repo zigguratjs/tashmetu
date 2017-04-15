@@ -17,13 +17,8 @@ class ReadOnlyRestRouter {
   private getAll(req: express.Request, res: express.Response): void {
     let collection = this.database.collection(this.collection);
     let selector = this.parseJson(req.query.selector);
-    let options: any = {};
-    if (req.query.limit) {
-      options.limit = req.query.limit;
-    }
-    if (req.query.sort) {
-      options.sort = this.parseJson(req.query.sort);
-    }
+    let options = this.parseJson(req.query.options);
+
     collection.find(selector, options).then((result: any) => {
       res.setHeader('Content-Type', 'application/json');
       res.send(result);
