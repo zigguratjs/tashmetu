@@ -10,10 +10,12 @@ export class Directory implements FSStorageAdapter {
     private fs: FileSystem,
     private config: DirectoryConfig
   ) {
-    fs.readdir(config.path).forEach((name: string) => {
-      let doc = this.loadPath(join(config.path, name));
-      collection.upsert(doc);
-    });
+    try {
+      fs.readdir(config.path).forEach((name: string) => {
+        let doc = this.loadPath(join(config.path, name));
+        collection.upsert(doc);
+      });
+    } catch (e) { return; }
   }
 
   public update(path: string): void {
