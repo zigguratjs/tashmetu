@@ -7,16 +7,31 @@ import {MiddlewareConfig, RouterConfig, RouterMethodMeta} from './decorators';
   singleton: true
 })
 export class Server {
-  @inject('tiamat.Injector') private injector: Injector;
+  private _app: express.Application;
+  private _io: any;
+  private httpServer: any;
+  private injector: Injector;
 
-  private _app: express.Application = express();
+  public constructor(
+    @inject('tiamat.Injector') injector: Injector
+  ) {
+    this._app = express();
+    this.injector = injector;
+
+    this.httpServer = require('http').Server(this._app);
+    this._io = require('socket.io')(this.httpServer);
+  }
 
   public listen(port: number): void {
-    this._app.listen(port);
+    this.httpServer.listen(port);
   }
 
   public app(): express.Application {
     return this._app;
+  }
+
+  public io(): any {
+    return this._io;
   }
 
   @activate('tashmetu.Router')

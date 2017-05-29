@@ -3,12 +3,12 @@ import {DatabaseReporter, FileSystemReporter} from './reporters';
 
 export {FileSystem, file, directory} from './fs';
 export {yaml} from './yaml';
-export {Server, MiddlewareProvider, router, get} from './server';
+export {Server, TransmitterConfig, MiddlewareProvider, router, get} from './server';
 export {readOnly} from './rest';
 export {requestReporter} from './reporters';
 
 import {FileSystemService, FSCollectionManager} from './fs';
-import {Server} from './server';
+import {Server, Transmitter} from './server';
 
 @component({
   providers: [
@@ -16,7 +16,8 @@ import {Server} from './server';
     Server,
     DatabaseReporter,
     FileSystemReporter,
-    FSCollectionManager
+    FSCollectionManager,
+    Transmitter
   ]
 })
 export class TashmetuServer {}
