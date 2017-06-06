@@ -1,6 +1,6 @@
 {
   "name": "@samizdatjs/tashmetu-server",
-  "version": "0.2.7",
+  "version": "0.2.8",
   "description": "Tashmetu server-side component",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
@@ -10,7 +10,7 @@
   "author": "Björn Andersson",
   "license": "MIT",
   "dependencies": {
-    "@samizdatjs/tashmetu": "^0.14.1",
+    "@samizdatjs/tashmetu": "^0.15.3",
     "@samizdatjs/tiamat": "^0.3.9",
     "@types/chalk": "^0.4.31",
     "@types/chokidar": "^1.4.30",

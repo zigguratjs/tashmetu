@@ -19,7 +19,8 @@ export function requestReporter(config: any): MiddlewareProvider {
             return chalk.red(code);
           }
         }
-        log(chalk.cyan(req.method) + ' ' + req.originalUrl + ' ' + status(res.statusCode));
+        let url = decodeURIComponent(req.originalUrl);
+        log(chalk.cyan(req.method) + ' ' +  url + ' ' + status(res.statusCode));
       });
       next();
     };
