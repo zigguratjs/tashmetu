@@ -19,9 +19,12 @@ class ReadOnlyRestRouter {
     let selector = this.parseJson(req.query.selector);
     let options = this.parseJson(req.query.options);
 
-    collection.find(selector, options).then((result: any) => {
-      res.setHeader('Content-Type', 'application/json');
-      res.send(result);
+    collection.count(selector).then((count: number) => {
+      collection.find(selector, options).then((result: any) => {
+        res.setHeader('Content-Type', 'application/json');
+        res.setHeader('X-total-count', count.toString());
+        res.send(result);
+      });
     });
   }
 
