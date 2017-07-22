@@ -1,6 +1,6 @@
 {
   "name": "@samizdatjs/tashmetu-server",
-  "version": "0.3.0",
+  "version": "0.4.0",
   "description": "Tashmetu server-side component",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
@@ -10,27 +10,28 @@
   "author": "Björn Andersson",
   "license": "MIT",
   "dependencies": {
-    "@samizdatjs/tashmetu": "^0.16.1",
-    "@samizdatjs/tiamat": "^0.3.9",
+    "@samizdatjs/tashmetu": "0.17.0",
+    "@samizdatjs/tiamat": "0.4.0",
+    "bluebird": "^3.5.0",
     "chalk": "^1.1.3",
     "express": "^4.14.0",
     "lodash": "^4.17.4",
     "on-headers": "^1.0.1",
-    "reflect-metadata": "^0.1.9",
     "socket.io": "^2.0.1"
   },
   "devDependencies": {
+    "@types/bluebird": "^3.5.3",
     "@types/chalk": "^0.4.31",
     "@types/express": "^4.0.34",
-    "@types/lodash": "^4.14.45",
-    "@types/node": "6.0.54",
+    "@types/lodash": "^4.14.70",
+    "@types/node": "8.0.14",
     "@types/socket.io": "^1.4.29",
     "gulp": "^3.9.1",
-    "gulp-tslint": "^7.0.1",
+    "gulp-tslint": "^8.1.1",
     "gulp-typescript": "^3.1.4",
     "harmonize": "^2.0.0",
-    "run-sequence": "^1.2.2",
-    "tslint": "^4.4.2",
+    "run-sequence": "^2.0.0",
+    "tslint": "^5.4.0",
     "typescript": "^2.1.5"
   }
 }

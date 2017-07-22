@@ -11,7 +11,7 @@ export function readOnly(collection: string): RouterProvider {
 }
 
 class ReadOnlyRestRouter {
-  public constructor(private database: Database, private collection: string) {};
+  public constructor(private database: Database, private collection: string) {}
 
   @get({path: '/'})
   private getAll(req: express.Request, res: express.Response): void {

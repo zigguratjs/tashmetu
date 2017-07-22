@@ -52,11 +52,11 @@ export class Server {
     return router;
   }
 
-  private getProviderInstance(provider: string | Function): any {
-    if (typeof provider === 'string') {
-      return this.injector.get(provider);
+  private getProviderInstance(p: string | Function): any {
+    if (typeof p === 'string') {
+      return this.injector.get(p);
     } else {
-      return provider(this.injector);
+      return p(this.injector);
     }
   }
 
