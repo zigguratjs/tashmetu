@@ -1,17 +1,13 @@
-import {component} from '@samizdatjs/tiamat';
-import {DatabaseReporter} from './reporters';
+import {component} from '@ziggurat/tiamat';
 
-export {Server, TransmitterConfig, MiddlewareProvider, router, get} from './server';
-export {readOnly} from './rest';
-export {requestReporter} from './reporters';
+export {Server} from './server';
+export {MiddlewareProvider, router, get} from './decorators';
 
-import {Server, Transmitter} from './server';
+import {Server} from './server';
 
 @component({
   providers: [
-    Server,
-    DatabaseReporter,
-    Transmitter
+    Server
   ]
 })
-export class TashmetuServer {}
+export class Tashmetu {}

@@ -1,7 +1,7 @@
 {
-  "name": "@samizdatjs/tashmetu-server",
-  "version": "0.4.3",
-  "description": "Tashmetu server-side component",
+  "name": "@ziggurat/tashmetu",
+  "version": "0.5.0",
+  "description": "Tashmetu is a server built on express",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
@@ -10,20 +10,14 @@
   "author": "Björn Andersson",
   "license": "MIT",
   "dependencies": {
-    "@samizdatjs/tashmetu": "^0.17.3",
-    "@samizdatjs/tiamat": "^0.4.2",
+    "@ziggurat/tiamat": "^0.5.0",
     "bluebird": "^3.5.0",
-    "chalk": "^1.1.3",
     "express": "^4.14.0",
-    "lodash": "^4.17.4",
-    "on-headers": "^1.0.1",
     "socket.io": "^2.0.1"
   },
   "devDependencies": {
     "@types/bluebird": "^3.5.3",
-    "@types/chalk": "^0.4.31",
     "@types/express": "^4.0.34",
-    "@types/lodash": "^4.14.70",
     "@types/node": "8.0.14",
     "@types/socket.io": "^1.4.29",
     "gulp": "^3.9.1",

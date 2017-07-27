@@ -1,5 +1,5 @@
 import {classDecorator, propertyDecorator, Injector, PropertyMeta,
-  PropertyDecorator, TaggedClassAnnotation} from '@samizdatjs/tiamat';
+  PropertyDecorator, TaggedClassAnnotation} from '@ziggurat/tiamat';
 import * as express from 'express';
 
 export type MiddlewareProvider = (injector: Injector) => express.RequestHandler;
