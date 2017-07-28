@@ -1,7 +1,7 @@
 import {component} from '@ziggurat/tiamat';
 
 export {Server} from './server';
-export {MiddlewareProvider, router, get} from './decorators';
+export {MiddlewareProvider, RouterProvider, router, get} from './decorators';
 
 import {Server} from './server';
 
