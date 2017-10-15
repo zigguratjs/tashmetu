@@ -1,7 +1,6 @@
 import * as express from 'express';
 import {inject, provider, activate, Injector} from '@ziggurat/tiamat';
 import {MiddlewareConfig, RouterConfig, RouterMethodMeta} from './decorators';
-import * as Promise from 'bluebird';
 
 @provider({
   for: 'tashmetu.Server',
