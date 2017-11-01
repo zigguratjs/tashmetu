@@ -7,32 +7,8 @@ import {MiddlewareConfig, RouterConfig, RouterMethodMeta} from './decorators';
   singleton: true
 })
 export class Server {
-  private _app: express.Application;
-  private _io: any;
-  private httpServer: any;
-  private injector: Injector;
-
-  public constructor(
-    @inject('tiamat.Injector') injector: Injector
-  ) {
-    this._app = express();
-    this.injector = injector;
-
-    this.httpServer = require('http').Server(this._app);
-    this._io = require('socket.io')(this.httpServer);
-  }
-
-  public listen(port: number): void {
-    this.httpServer.listen(port);
-  }
-
-  public app(): express.Application {
-    return this._app;
-  }
-
-  public io(): any {
-    return this._io;
-  }
+  @inject('tiamat.Injector') private injector: Injector;
+  @inject('express.Application') private expressApp: express.Application;
 
   @activate('tashmetu.Router')
   public activate(router: any): any {
@@ -63,11 +39,11 @@ export class Server {
   private addRouter(controller: any, path: string): void {
     let router: express.Router = express.Router();
     this.addRouterMethods(controller, router);
-    this._app.use(path, router);
+    this.expressApp.use(path, router);
   }
 
   private addRouterMethods(entity: any, _router?: express.Router) {
-    let router = _router || this._app;
+    let router = _router || this.expressApp;
     let methods: RouterMethodMeta[] = Reflect.getOwnMetadata(
       'tashmetu:router-method', entity.constructor) || [];
     methods.forEach((metadata: any) => {
@@ -82,7 +58,7 @@ export class Server {
   }
 
   private addMiddleware(config: MiddlewareConfig): void {
-    this._app.use(config.path, this.createHandler(config));
+    this.expressApp.use(config.path, this.createHandler(config));
   }
 
   private createHandler(mw: any): express.RequestHandler {
