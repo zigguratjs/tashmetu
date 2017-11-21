@@ -1,27 +1,19 @@
 import {component} from '@ziggurat/tiamat';
-import * as express from 'express';
-import * as http from 'http';
-import * as socket from 'socket.io';
+
+import {HttpServerFactory} from './factories/http';
+import {SocketIOServerFactory} from './factories/socket';
+import {MiddlewareFactory} from './factories/middleware';
 
 export {MiddlewareProvider, RouterProvider, router, get} from './decorators';
-
-import {Server} from './server';
-
-const expressApp = express();
-const httpServer = http.createServer(expressApp);
-const socketIOServer = socket(httpServer);
+export {MiddlewareFactory} from './factories/middleware';
+export {RouterFactory} from './factories/router';
+export {ServerFactory} from './factories/server';
 
 @component({
   providers: [
-    Server
+    HttpServerFactory,
+    MiddlewareFactory,
+    SocketIOServerFactory
   ],
-  definitions: {
-    'express.Application': expressApp,
-    'http.Server': httpServer,
-    'socket.io.Server': socketIOServer
-  },
-  autoCreate: [
-    'tashmetu.Server'
-  ]
 })
 export class Tashmetu {}
