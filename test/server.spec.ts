@@ -14,9 +14,14 @@ describe('ServerFactory', () => {
       return super.app();
     }
 
-    @get({path: '/get_async'})
-    async foo(req: express.Request, res: express.Response): Promise<any> {
+    @get({path: '/asyncGet'})
+    async asyncGet(req: express.Request, res: express.Response): Promise<any> {
       return {};
+    }
+
+    @get({path: '/promiseGet'})
+    promiseGet(req: express.Request, res: express.Response): Promise<any> {
+      return Promise.resolve({});
     }
   }
 
@@ -30,7 +35,11 @@ describe('ServerFactory', () => {
 
   describe('get decorator', () => {
     it('should work with an async handler', (done) => {
-      request(app).get('/get_async').expect(200, done); 
+      request(app).get('/asyncGet').expect(200, done);
+    });
+
+    it('should work with promises', (done) => {
+      request(app).get('/promiseGet').expect(200, done);
     });
   });
 });
