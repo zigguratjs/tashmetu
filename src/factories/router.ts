@@ -21,10 +21,7 @@ export class BaseRouterFactory {
   protected applyDecorators(router: express.Router) {
     const config: RouterConfig = Reflect.getOwnMetadata(
       'tashmetu:router', this.constructor);
-    if (!config) {
-      return;
-    }
-    if (config.middleware) {
+    if (config && config.middleware) {
       for (const middlewareConfig of config.middleware) {
         router.use(middlewareConfig.path, this.createHandler(middlewareConfig));
       }

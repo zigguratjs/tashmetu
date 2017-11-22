@@ -6,8 +6,6 @@ import {BaseRouterFactory} from './router';
 
 @injectable()
 export class ServerFactory extends BaseRouterFactory {
-
-  @factory({key: 'express.Application'})
   public app(): express.Application {
     const app = express();
     this.applyDecorators(app);
