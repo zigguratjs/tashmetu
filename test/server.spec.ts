@@ -15,12 +15,12 @@ describe('ServerFactory', () => {
     }
 
     @get({path: '/asyncGet'})
-    async asyncGet(req: express.Request, res: express.Response): Promise<any> {
+    private async asyncGet(req: express.Request, res: express.Response): Promise<any> {
       return {};
     }
 
     @get({path: '/promiseGet'})
-    promiseGet(req: express.Request, res: express.Response): Promise<any> {
+    private promiseGet(req: express.Request, res: express.Response): Promise<any> {
       return Promise.resolve({});
     }
   }

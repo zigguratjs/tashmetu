@@ -1,8 +1,10 @@
 import {classDecorator, propertyDecorator, Injector, PropertyMeta,
   PropertyDecorator, TaggedClassAnnotation} from '@ziggurat/tiamat';
+import {RouterFactory} from './factories/router';
 import * as express from 'express';
 
 export type MiddlewareProvider = (injector: Injector) => express.RequestHandler;
+export type RouterFactoryProvider = (injector: Injector) => RouterFactory;
 export type RouterProvider = (injector: Injector) => any;
 
 export interface MiddlewareConfig {
@@ -10,7 +12,9 @@ export interface MiddlewareConfig {
 
   handler?: express.RequestHandler;
 
-  provider?: string | MiddlewareProvider;
+  provider?: MiddlewareProvider;
+
+  factory?: string | RouterFactoryProvider;
 }
 
 export interface RouterConfig {

@@ -1,4 +1,4 @@
-import {bootstrap, component, factory, provider} from '@ziggurat/tiamat';
+import {bootstrap, component, factory, provider, Injector} from '@ziggurat/tiamat';
 import {ServerFactory} from '../src/factories/server';
 import {RouterFactory} from '../src/factories/router';
 import {get, router} from '../src/decorators';
@@ -13,15 +13,22 @@ describe('RouterFactory', () => {
   })
   class TestRouterFactory extends RouterFactory {
     @get({path: '/'})
-    async route(req: express.Request, res: express.Response): Promise<any> {
+    private async route(req: express.Request, res: express.Response): Promise<any> {
       return {};
     }
+  }
+
+  function factProvider() {
+    return (injector: Injector) => {
+      return new TestRouterFactory();
+    };
   }
 
   @provider()
   @router({
     middleware: [
-      {path: '/route', provider: 'test.Router'}
+      {path: '/route', factory: 'test.Router'},
+      {path: '/route2', factory: factProvider()}
     ]
   })
   class TestServerFactory extends ServerFactory {
@@ -39,7 +46,11 @@ describe('RouterFactory', () => {
 
   let app = bootstrap(TestComponent).get<express.Application>('express.Application');
 
-  it('should add router by key', (done) => {
+  it('should add router factory by key', (done) => {
     request(app).get('/route').expect(200, done);
+  });
+
+  it('should add router factory by provider', (done) => {
+    request(app).get('/route2').expect(200, done);
   });
 });
