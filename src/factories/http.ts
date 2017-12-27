@@ -2,9 +2,7 @@ import {inject, provider, factory} from '@ziggurat/tiamat';
 import * as express from 'express';
 import * as http from 'http';
 
-@provider({
-  key: 'tashmetu.HttpServerFactory'
-})
+@provider()
 export class HttpServerFactory {
   @inject('express.Application') private app: express.Application;
 

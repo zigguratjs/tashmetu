@@ -2,9 +2,7 @@ import {inject, factory, provider} from '@ziggurat/tiamat';
 import * as http from 'http';
 import * as SocketIO from 'socket.io';
 
-@provider({
-  key: 'tashmetu.SocketIOFactory'
-})
+@provider()
 export class SocketIOServerFactory {
   @inject('http.Server') private server: http.Server;
 
