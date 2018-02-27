@@ -57,3 +57,12 @@ export const get = propertyDecorator<RouterMethodConfig>(
 
 export const post = propertyDecorator<RouterMethodConfig>(
   new RouterMethodDecorator('post'));
+
+export const put = propertyDecorator<RouterMethodConfig>(
+  new RouterMethodDecorator('put'));
+
+export const patch = propertyDecorator<RouterMethodConfig>(
+  new RouterMethodDecorator('patch'));
+
+export const del = propertyDecorator<RouterMethodConfig>(
+  new RouterMethodDecorator('delete'));
