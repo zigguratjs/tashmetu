@@ -4,7 +4,7 @@ import {HttpServerFactory} from './factories/http';
 import {SocketIOServerFactory} from './factories/socket';
 
 export {MiddlewareProvider, RouterFactoryProvider, RouterProvider,
-  router, get} from './decorators';
+  router, get, post} from './decorators';
 export {RouterFactory} from './factories/router';
 export {ServerFactory} from './factories/server';
 

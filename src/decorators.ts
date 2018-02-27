@@ -54,3 +54,6 @@ export class RouterMethodDecorator extends PropertyDecorator<RouterMethodConfig>
 
 export const get = propertyDecorator<RouterMethodConfig>(
   new RouterMethodDecorator('get'));
+
+export const post = propertyDecorator<RouterMethodConfig>(
+  new RouterMethodDecorator('post'));

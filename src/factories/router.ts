@@ -27,21 +27,20 @@ export class BaseRouterFactory {
     const config: RouterConfig = Reflect.getOwnMetadata(
       'tashmetu:router', this.constructor);
     if (config && config.middleware) {
-      for (const middlewareConfig of config.middleware) {
+      for (let middlewareConfig of config.middleware) {
         router.use(middlewareConfig.path, this.createHandler(middlewareConfig));
       }
     }
 
-    let methods: RouterMethodMeta[] = Reflect.getOwnMetadata(
+    const methods: RouterMethodMeta[] = Reflect.getOwnMetadata(
       'tashmetu:router-method', this.constructor) || [];
-    methods.forEach((metadata: any) => {
-      if (metadata.data.middleware) {
-        metadata.data.middleware.forEach((mw: any) => {
-          router.get(metadata.data.path, this.createHandler(mw));
-        });
+    for (let config of methods) {
+      for (let mw of config.data.middleware || []) {
+        router.use(config.data.path, this.createHandler(mw));
       }
-      router.get(metadata.data.path, this.createMethodRequestHandler(this, metadata.key));
-    });
+      let requestHandler = this.createMethodRequestHandler(this, config.key);
+      (<any>router)[config.method](config.data.path, requestHandler);
+    }
   }
 
   protected createMethodRequestHandler(controller: any, key: string): express.RequestHandler {
