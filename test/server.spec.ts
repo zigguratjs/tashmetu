@@ -3,7 +3,7 @@ import {ServerFactory} from '../src/factories/server';
 import {get} from '../src/decorators';
 import {Tashmetu} from '../src/index';
 import * as express from 'express';
-import * as request from 'supertest';
+import * as request from 'supertest-as-promised';
 import 'mocha';
 
 describe('ServerFactory', () => {
@@ -34,12 +34,12 @@ describe('ServerFactory', () => {
   let app = bootstrap(TestComponent).get<express.Application>('express.Application');
 
   describe('get decorator', () => {
-    it('should work with an async handler', (done) => {
-      request(app).get('/asyncGet').expect(200, done);
+    it('should work with an async handler', () => {
+      return request(app).get('/asyncGet').expect(200);
     });
 
-    it('should work with promises', (done) => {
-      request(app).get('/promiseGet').expect(200, done);
+    it('should work with promises', () => {
+      return request(app).get('/promiseGet').expect(200);
     });
   });
 });

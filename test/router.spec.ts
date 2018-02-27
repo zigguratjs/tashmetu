@@ -4,7 +4,7 @@ import {RouterFactory} from '../src/factories/router';
 import {get, router} from '../src/decorators';
 import {Tashmetu} from '../src/index';
 import * as express from 'express';
-import * as request from 'supertest';
+import * as request from 'supertest-as-promised';
 import 'mocha';
 
 describe('RouterFactory', () => {
@@ -46,11 +46,11 @@ describe('RouterFactory', () => {
 
   let app = bootstrap(TestComponent).get<express.Application>('express.Application');
 
-  it('should add router factory by key', (done) => {
-    request(app).get('/route').expect(200, done);
+  it('should add router factory by key', () => {
+    return request(app).get('/route').expect(200);
   });
 
-  it('should add router factory by provider', (done) => {
-    request(app).get('/route2').expect(200, done);
+  it('should add router factory by provider', () => {
+    return request(app).get('/route2').expect(200);
   });
 });
