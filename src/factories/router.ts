@@ -1,7 +1,8 @@
 import * as express from 'express';
 import {inject, injectable, factory, provider, activate, Injector} from '@ziggurat/tiamat';
 import {MiddlewareConfig, MiddlewareProvider, RouterConfig,
-  RouterMethodMeta, RouterFactoryProvider} from '../decorators';
+  RouterMethodMeta, RouterMethodMiddlewareMeta, RouterFactoryProvider} from '../decorators';
+import {filter, reverse} from 'lodash';
 
 @injectable()
 export class BaseRouterFactory {
@@ -34,8 +35,10 @@ export class BaseRouterFactory {
 
     const methods: RouterMethodMeta[] = Reflect.getOwnMetadata(
       'tashmetu:router-method', this.constructor) || [];
+    const middleware: RouterMethodMiddlewareMeta<Function>[] = Reflect.getOwnMetadata(
+      'tashmetu:router-method-middleware', this.constructor) || [];
     for (let method of methods) {
-      this.addMethod(method, router);
+      this.addMethod(method, router, reverse(filter(middleware, {key: method.key})));
     }
   }
 
@@ -57,12 +60,20 @@ export class BaseRouterFactory {
     };
   }
 
-  private addMethod(config: RouterMethodMeta, router: express.Router) {
+  private addMethod(
+    config: RouterMethodMeta,
+    router: express.Router,
+    middlewares: RouterMethodMiddlewareMeta<Function>[]
+  ) {
     function addRequestHandler(handler: express.RequestHandler) {
-      (<any>router)[config.method](config.data.path, handler);
+      (<any>router)[config.method](config.data, handler);
     }
-    for (let middleware of config.data.middleware || []) {
-      addRequestHandler(this.createHandler(middleware));
+    for (let middleware of middlewares || []) {
+      if (middleware.isProvider) {
+        addRequestHandler(middleware.data(this.injector));
+      } else {
+        addRequestHandler(<express.RequestHandler>middleware.data);
+      }
     }
     addRequestHandler(this.createMethodRequestHandler(this, config.key));
   }

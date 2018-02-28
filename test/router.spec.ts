@@ -1,7 +1,7 @@
 import {bootstrap, component, factory, provider, Injector} from '@ziggurat/tiamat';
 import {ServerFactory} from '../src/factories/server';
 import {RouterFactory} from '../src/factories/router';
-import {get, post, router} from '../src/decorators';
+import {get, post, use, router} from '../src/decorators';
 import {Tashmetu} from '../src/index';
 import * as express from 'express';
 import * as bodyParser from 'body-parser';
@@ -14,12 +14,13 @@ describe('RouterFactory', () => {
     key: 'test.Router'
   })
   class TestRouterFactory extends RouterFactory {
-    @get({path: '/'})
+    @get('/')
     private async route(req: express.Request, res: express.Response): Promise<any> {
       return {};
     }
 
-    @post({path: '/post'})
+    @post('/post')
+    @use(bodyParser.json())
     private async postRoute(req: express.Request, res: express.Response): Promise<any> {
       return req.body;
     }
@@ -32,7 +33,6 @@ describe('RouterFactory', () => {
   @provider()
   @router({
     middleware: [
-      {path: '*',       handler: bodyParser.json()},
       {path: '/route',  router: 'test.Router'},
       {path: '/route2', router: factProvider()}
     ]

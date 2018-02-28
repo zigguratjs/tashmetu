@@ -14,12 +14,12 @@ describe('ServerFactory', () => {
       return super.app();
     }
 
-    @get({path: '/asyncGet'})
+    @get('/asyncGet')
     private async asyncGet(req: express.Request, res: express.Response): Promise<any> {
       return {};
     }
 
-    @get({path: '/promiseGet'})
+    @get('/promiseGet')
     private promiseGet(req: express.Request, res: express.Response): Promise<any> {
       return Promise.resolve({});
     }

@@ -25,38 +25,53 @@ export const router = classDecorator<RouterConfig>(
     middleware: []
   });
 
-export interface RouterMethodConfig {
-  path: string;
-
-  middleware?: any; // TODO: Type
-}
-
-export interface RouterMethodMeta extends PropertyMeta<RouterMethodConfig> {
+export interface RouterMethodMeta extends PropertyMeta<string> {
   method: string;
 }
 
-export class RouterMethodDecorator extends PropertyDecorator<RouterMethodConfig> {
+export interface RouterMethodMiddlewareMeta<T> extends PropertyMeta<T> {
+  isProvider: boolean;
+}
+
+export class RouterMethodDecorator extends PropertyDecorator<string> {
   public constructor(private method: string) {
     super();
   }
 
-  public decorate(data: RouterMethodConfig, target: any, key: string) {
+  public decorate(data: string, target: any, key: string) {
     let meta: RouterMethodMeta = {target, key, method: this.method, data};
     this.appendMeta('tashmetu:router-method', meta, target.constructor);
   }
 }
 
-export const get = propertyDecorator<RouterMethodConfig>(
+export class RouterMethodMiddlewareDecorator<T> extends PropertyDecorator<T> {
+  public constructor(private isProvider: boolean) {
+    super();
+  }
+
+  public decorate(data: T, target: any, key: string) {
+    let meta: RouterMethodMiddlewareMeta<T> = {target, key, data, isProvider: this.isProvider};
+    this.appendMeta('tashmetu:router-method-middleware', meta, target.constructor);
+  }
+}
+
+export const get = propertyDecorator<string>(
   new RouterMethodDecorator('get'));
 
-export const post = propertyDecorator<RouterMethodConfig>(
+export const post = propertyDecorator<string>(
   new RouterMethodDecorator('post'));
 
-export const put = propertyDecorator<RouterMethodConfig>(
+export const put = propertyDecorator<string>(
   new RouterMethodDecorator('put'));
 
-export const patch = propertyDecorator<RouterMethodConfig>(
+export const patch = propertyDecorator<string>(
   new RouterMethodDecorator('patch'));
 
-export const del = propertyDecorator<RouterMethodConfig>(
+export const del = propertyDecorator<string>(
   new RouterMethodDecorator('delete'));
+
+export const use = propertyDecorator<express.RequestHandler>(
+  new RouterMethodMiddlewareDecorator<express.RequestHandler>(false));
+
+export const useProvider = propertyDecorator<MiddlewareProvider>(
+  new RouterMethodMiddlewareDecorator<MiddlewareProvider>(true));
