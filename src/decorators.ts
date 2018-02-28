@@ -5,7 +5,6 @@ import * as express from 'express';
 
 export type MiddlewareProvider = (injector: Injector) => express.RequestHandler;
 export type RouterFactoryProvider = (injector: Injector) => RouterFactory;
-export type RouterProvider = (injector: Injector) => any;
 
 export interface MiddlewareConfig {
   path: string;
@@ -18,15 +17,12 @@ export interface MiddlewareConfig {
 }
 
 export interface RouterConfig {
-  routes?: any[]; // TODO: Type
-
   middleware?: MiddlewareConfig[];
 }
 
 export const router = classDecorator<RouterConfig>(
   new TaggedClassAnnotation('tashmetu:router', ['tashmetu.Router']), {
-    routes: [],
-    middleware: [],
+    middleware: []
   });
 
 export interface RouterMethodConfig {

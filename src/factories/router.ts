@@ -34,12 +34,8 @@ export class BaseRouterFactory {
 
     const methods: RouterMethodMeta[] = Reflect.getOwnMetadata(
       'tashmetu:router-method', this.constructor) || [];
-    for (let config of methods) {
-      for (let mw of config.data.middleware || []) {
-        router.use(config.data.path, this.createHandler(mw));
-      }
-      let requestHandler = this.createMethodRequestHandler(this, config.key);
-      (<any>router)[config.method](config.data.path, requestHandler);
+    for (let method of methods) {
+      this.addMethod(method, router);
     }
   }
 
@@ -59,6 +55,16 @@ export class BaseRouterFactory {
         res.send(result);
       }
     };
+  }
+
+  private addMethod(config: RouterMethodMeta, router: express.Router) {
+    function addRequestHandler(handler: express.RequestHandler) {
+      (<any>router)[config.method](config.data.path, handler);
+    }
+    for (let middleware of config.data.middleware || []) {
+      addRequestHandler(this.createHandler(middleware));
+    }
+    addRequestHandler(this.createMethodRequestHandler(this, config.key));
   }
 }
 
