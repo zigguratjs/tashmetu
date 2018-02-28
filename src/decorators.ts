@@ -18,8 +18,6 @@ export interface MiddlewareConfig {
 }
 
 export interface RouterConfig {
-  mount?: string;
-
   routes?: any[]; // TODO: Type
 
   middleware?: MiddlewareConfig[];

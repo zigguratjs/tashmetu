@@ -1,6 +1,6 @@
 {
   "name": "@ziggurat/tashmetu",
-  "version": "0.5.15",
+  "version": "0.5.16",
   "description": "Tashmetu is a server built on express",
   "scripts": {
     "test": "mocha --opts mocha.opts"
