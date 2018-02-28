@@ -1,7 +1,8 @@
-import {classDecorator, propertyDecorator, Injector, PropertyMeta,
+import {classDecorator, propertyDecorator, Injector,
   PropertyDecorator, TaggedClassAnnotation} from '@ziggurat/tiamat';
-import {RouterFactory} from './factories/router';
+import {RouterFactory, Factory} from './factories/router';
 import * as express from 'express';
+import {each, reverse, map} from 'lodash';
 
 export type MiddlewareProvider = (injector: Injector) => express.RequestHandler;
 export type RouterFactoryProvider = (injector: Injector) => RouterFactory;
@@ -25,12 +26,39 @@ export const router = classDecorator<RouterConfig>(
     middleware: []
   });
 
-export interface RouterMethodMeta extends PropertyMeta<string> {
-  method: string;
+export function getMetadata<T>(key: string, target: any, Cls: any) {
+  if (!Reflect.hasOwnMetadata(key, target)) {
+    Reflect.defineMetadata(key, new Cls(), target);
+  }
+  return Reflect.getOwnMetadata(key, target);
 }
 
-export interface RouterMethodMiddlewareMeta<T> extends PropertyMeta<T> {
-  isProvider: boolean;
+export class RouterMeta {
+  private setupHandlers: Function[] = [];
+  private methodMiddleware: {[key: string]: MiddlewareProvider[]} = {};
+
+  public static get(target: any): RouterMeta {
+    return getMetadata<RouterMeta>('tashmetu:router-meta', target, RouterMeta);
+  }
+
+  public onSetup(fn: (rt: express.Router, injector: Injector) => void) {
+    this.setupHandlers.push(fn);
+  }
+
+  public addMiddleware(provider: MiddlewareProvider, key?: string) {
+    if (key) {
+      (this.methodMiddleware[key] = this.methodMiddleware[key] || []).push(provider);
+    }
+    return this;
+  }
+
+  public getMiddleware(key: string): MiddlewareProvider[] {
+    return reverse(this.methodMiddleware[key]);
+  }
+
+  public setup(rt: express.Router, injector: Injector) {
+    each(this.setupHandlers, (fn: Function) => fn(rt, injector));
+  }
 }
 
 export class RouterMethodDecorator extends PropertyDecorator<string> {
@@ -39,19 +67,40 @@ export class RouterMethodDecorator extends PropertyDecorator<string> {
   }
 
   public decorate(data: string, target: any, key: string) {
-    let meta: RouterMethodMeta = {target, key, method: this.method, data};
-    this.appendMeta('tashmetu:router-method', meta, target.constructor);
+    let meta = RouterMeta.get(target.constructor);
+
+    meta.addMiddleware((injector: Injector) => {
+      return (req: express.Request, res: express.Response, next: express.NextFunction) => {
+        const result: any = target[key](req, res, next);
+        if (result && result instanceof Promise) {
+          result.then((value: any) => {
+            if (value && !res.headersSent) {
+              res.send(value);
+            }
+          })
+          .catch((error: any) => {
+            next(error);
+          });
+        } else if (result && !res.headersSent) {
+          res.send(result);
+        }
+      };
+    }, key);
+    meta.onSetup((rt: express.Router, injector: Injector) => {
+      (<any>rt)[this.method](data, map(meta.getMiddleware(key), provider => provider(injector)));
+    });
   }
 }
 
-export class RouterMethodMiddlewareDecorator<T> extends PropertyDecorator<T> {
-  public constructor(private isProvider: boolean) {
-    super();
+export class MiddlewareDecorator extends PropertyDecorator<express.RequestHandler> {
+  public decorate(handler: express.RequestHandler, target: any, key: string) {
+    RouterMeta.get(target.constructor).addMiddleware(injector => handler, key);
   }
+}
 
-  public decorate(data: T, target: any, key: string) {
-    let meta: RouterMethodMiddlewareMeta<T> = {target, key, data, isProvider: this.isProvider};
-    this.appendMeta('tashmetu:router-method-middleware', meta, target.constructor);
+export class MiddlewareProviderDecorator extends PropertyDecorator<MiddlewareProvider> {
+  public decorate(provider: MiddlewareProvider, target: any, key: string) {
+    RouterMeta.get(target.constructor).addMiddleware(provider, key);
   }
 }
 
@@ -71,7 +120,7 @@ export const del = propertyDecorator<string>(
   new RouterMethodDecorator('delete'));
 
 export const use = propertyDecorator<express.RequestHandler>(
-  new RouterMethodMiddlewareDecorator<express.RequestHandler>(false));
+  new MiddlewareDecorator());
 
 export const useProvider = propertyDecorator<MiddlewareProvider>(
-  new RouterMethodMiddlewareDecorator<MiddlewareProvider>(true));
+  new MiddlewareProviderDecorator());

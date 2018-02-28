@@ -19,8 +19,8 @@ describe('RouterFactory', () => {
       return {};
     }
 
-    @post('/post')
     @use(bodyParser.json())
+    @post('/post')
     private async postRoute(req: express.Request, res: express.Response): Promise<any> {
       return req.body;
     }

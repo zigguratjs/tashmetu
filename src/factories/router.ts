@@ -1,11 +1,9 @@
 import * as express from 'express';
-import {inject, injectable, factory, provider, activate, Injector} from '@ziggurat/tiamat';
-import {MiddlewareConfig, MiddlewareProvider, RouterConfig,
-  RouterMethodMeta, RouterMethodMiddlewareMeta, RouterFactoryProvider} from '../decorators';
-import {filter, reverse} from 'lodash';
+import {inject, injectable, Injector} from '@ziggurat/tiamat';
+import {MiddlewareConfig, RouterConfig, RouterMeta} from '../decorators';
 
 @injectable()
-export class BaseRouterFactory {
+export class Factory {
   @inject('tiamat.Injector') private injector: Injector;
 
   protected createHandler(config: MiddlewareConfig): express.RequestHandler {
@@ -33,54 +31,13 @@ export class BaseRouterFactory {
       }
     }
 
-    const methods: RouterMethodMeta[] = Reflect.getOwnMetadata(
-      'tashmetu:router-method', this.constructor) || [];
-    const middleware: RouterMethodMiddlewareMeta<Function>[] = Reflect.getOwnMetadata(
-      'tashmetu:router-method-middleware', this.constructor) || [];
-    for (let method of methods) {
-      this.addMethod(method, router, reverse(filter(middleware, {key: method.key})));
-    }
-  }
-
-  protected createMethodRequestHandler(controller: any, key: string): express.RequestHandler {
-    return (req: express.Request, res: express.Response, next: express.NextFunction) => {
-      const result: any = controller[key](req, res, next);
-      if (result && result instanceof Promise) {
-        result.then((value: any) => {
-          if (value && !res.headersSent) {
-            res.send(value);
-          }
-        })
-        .catch((error: any) => {
-          next(error);
-        });
-      } else if (result && !res.headersSent) {
-        res.send(result);
-      }
-    };
-  }
-
-  private addMethod(
-    config: RouterMethodMeta,
-    router: express.Router,
-    middlewares: RouterMethodMiddlewareMeta<Function>[]
-  ) {
-    function addRequestHandler(handler: express.RequestHandler) {
-      (<any>router)[config.method](config.data, handler);
-    }
-    for (let middleware of middlewares || []) {
-      if (middleware.isProvider) {
-        addRequestHandler(middleware.data(this.injector));
-      } else {
-        addRequestHandler(<express.RequestHandler>middleware.data);
-      }
-    }
-    addRequestHandler(this.createMethodRequestHandler(this, config.key));
+    RouterMeta.get(this.constructor)
+      .setup(router, this.injector);
   }
 }
 
 @injectable()
-export class RouterFactory extends BaseRouterFactory {
+export class RouterFactory extends Factory {
   public router(): express.Router {
     let router = express.Router();
     this.applyDecorators(router);
