@@ -92,18 +92,6 @@ export class RouterMethodDecorator extends PropertyDecorator<string> {
   }
 }
 
-export class MiddlewareDecorator extends PropertyDecorator<express.RequestHandler> {
-  public decorate(handler: express.RequestHandler, target: any, key: string) {
-    RouterMeta.get(target.constructor).addMiddleware(injector => handler, key);
-  }
-}
-
-export class MiddlewareProviderDecorator extends PropertyDecorator<MiddlewareProvider> {
-  public decorate(provider: MiddlewareProvider, target: any, key: string) {
-    RouterMeta.get(target.constructor).addMiddleware(provider, key);
-  }
-}
-
 export const get = propertyDecorator<string>(
   new RouterMethodDecorator('get'));
 
@@ -119,8 +107,14 @@ export const patch = propertyDecorator<string>(
 export const del = propertyDecorator<string>(
   new RouterMethodDecorator('delete'));
 
-export const use = propertyDecorator<express.RequestHandler>(
-  new MiddlewareDecorator());
+export const use = (handler: express.RequestHandler) => {
+  return (target: any, key: string) => {
+    RouterMeta.get(target.constructor).addMiddleware(injector => handler, key);
+  };
+};
 
-export const useProvider = propertyDecorator<MiddlewareProvider>(
-  new MiddlewareProviderDecorator());
+export const useProvider = (provider: MiddlewareProvider) => {
+  return (target: any, key: string) => {
+    RouterMeta.get(target.constructor).addMiddleware(provider, key);
+  };
+};
