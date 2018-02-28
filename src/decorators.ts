@@ -14,7 +14,7 @@ export interface MiddlewareConfig {
 
   provider?: MiddlewareProvider;
 
-  factory?: string | RouterFactoryProvider;
+  router?: string | RouterFactoryProvider;
 }
 
 export interface RouterConfig {

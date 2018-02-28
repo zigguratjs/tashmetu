@@ -12,14 +12,14 @@ export class BaseRouterFactory {
       return config.handler;
     } else if (config.provider) {
       return config.provider(this.injector);
-    } else if (config.factory) {
-      if (typeof config.factory === 'string') {
-        return this.injector.get<any>(config.factory).router();
+    } else if (config.router) {
+      if (typeof config.router === 'string') {
+        return this.injector.get<any>(config.router).router();
       } else {
-        return config.factory(this.injector).router();
+        return config.router(this.injector).router();
       }
     } else {
-      throw new Error('Middleware must have either a handler or a provider');
+      throw new Error('Middleware must have a handler, provider or router');
     }
   }
 

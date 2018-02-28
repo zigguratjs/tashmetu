@@ -32,9 +32,9 @@ describe('RouterFactory', () => {
   @provider()
   @router({
     middleware: [
-      {path: '*', handler: bodyParser.json()},
-      {path: '/route', factory: 'test.Router'},
-      {path: '/route2', factory: factProvider()}
+      {path: '*',       handler: bodyParser.json()},
+      {path: '/route',  router: 'test.Router'},
+      {path: '/route2', router: factProvider()}
     ]
   })
   class TestServerFactory extends ServerFactory {
