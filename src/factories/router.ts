@@ -1,6 +1,7 @@
 import * as express from 'express';
 import {inject, injectable, Injector} from '@ziggurat/tiamat';
-import {MiddlewareConfig, RouterConfig, RouterMeta} from '../decorators';
+import {RouterConfig, MiddlewareConfig} from '../decorators/interfaces';
+import {RouterMeta} from '../decorators/meta';
 
 @injectable()
 export class Factory {
