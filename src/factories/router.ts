@@ -1,6 +1,5 @@
 import * as express from 'express';
 import {inject, injectable, Injector} from '@ziggurat/tiamat';
-import {RouterConfig, MiddlewareConfig} from '../decorators/interfaces';
 import {RouterMeta} from '../decorators/meta';
 
 @injectable()

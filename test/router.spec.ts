@@ -1,7 +1,7 @@
 import {bootstrap, component, factory, provider, Injector} from '@ziggurat/tiamat';
 import {ServerFactory} from '../src/factories/server';
 import {RouterFactory} from '../src/factories/router';
-import {get, post, use, router} from '../src/decorators';
+import {get, post, use, middleware} from '../src/decorators';
 import {Tashmetu} from '../src/index';
 import * as express from 'express';
 import * as bodyParser from 'body-parser';
@@ -26,17 +26,11 @@ describe('RouterFactory', () => {
     }
   }
 
-  function factProvider() {
-    return (injector: Injector) => new TestRouterFactory();
-  }
-
   @provider()
-  @router({
-    middleware: [
-      {path: '/route',  router: 'test.Router'},
-      {path: '/route2', router: factProvider()}
-    ]
-  })
+  @middleware([
+    {path: '/route',  router: 'test.Router'},
+    {path: '/route2', router: injector => new TestRouterFactory()}
+  ])
   class TestServerFactory extends ServerFactory {
     @factory({key: 'express.Application'})
     public app(): express.Application {

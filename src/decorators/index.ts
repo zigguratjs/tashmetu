@@ -1,14 +1,12 @@
 import {classDecorator, propertyDecorator, Injector} from '@ziggurat/tiamat';
-import {RouterConfig, MiddlewareProvider} from './interfaces';
+import {MiddlewareConfig, MiddlewareProvider} from './interfaces';
 import {RouterMethodDecorator} from './method';
-import {RouterDecorator} from './router';
+import {MiddlewareDecorator} from './middleware';
 import {RouterMeta} from './meta';
 import * as express from 'express';
 
-export const router = classDecorator<RouterConfig>(
-  new RouterDecorator(), {
-    middleware: []
-  });
+export const middleware = classDecorator<MiddlewareConfig[]>(
+  new MiddlewareDecorator());
 
 export const get = propertyDecorator<string>(
   new RouterMethodDecorator('get'));

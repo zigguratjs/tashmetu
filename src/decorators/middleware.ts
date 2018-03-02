@@ -1,9 +1,9 @@
 import {ClassDecorator, Injector} from '@ziggurat/tiamat';
-import {RouterConfig, MiddlewareProvider, MiddlewareConfig} from './interfaces';
+import {MiddlewareProvider, MiddlewareConfig} from './interfaces';
 import {RouterMeta} from './meta';
 import * as express from 'express';
 
-export class RouterDecorator extends ClassDecorator<RouterConfig> {
+export class MiddlewareDecorator extends ClassDecorator<MiddlewareConfig[]> {
   protected createHandler(config: MiddlewareConfig, injector: Injector): express.RequestHandler {
     if (config.handler) {
       return config.handler;
@@ -20,11 +20,10 @@ export class RouterDecorator extends ClassDecorator<RouterConfig> {
     }
   }
 
-  public decorate(config: RouterConfig, target: any) {
-    this.appendMeta('tiamat:tags', 'tashmetu.Router', target);
-    for (let mwConfig of config.middleware || []) {
+  public decorate(config: MiddlewareConfig[], target: any) {
+    for (let mw of config || []) {
       RouterMeta.get(target).onSetup((router, injector) => {
-        router.use(mwConfig.path, this.createHandler(mwConfig, injector));
+        router.use(mw.path, this.createHandler(mw, injector));
       });
     }
   }
