@@ -11,7 +11,7 @@ export class RouterMethodDecorator extends PropertyDecorator<string> {
   public decorate(data: string, target: any, key: string) {
     let meta = RouterMeta.get(target.constructor);
 
-    meta.addMiddleware((injector: Injector) => {
+    meta.addMethodMiddleware(key, (injector: Injector) => {
       return (req: express.Request, res: express.Response, next: express.NextFunction) => {
         const result: any = target[key](req, res, next);
         if (result && result instanceof Promise) {
@@ -27,9 +27,10 @@ export class RouterMethodDecorator extends PropertyDecorator<string> {
           res.send(result);
         }
       };
-    }, key);
-    meta.onSetup((rt: express.Router, injector: Injector) => {
-      (<any>rt)[this.method](data, map(meta.getMiddleware(key), provider => provider(injector)));
+    });
+    meta.onSetup((router: express.Router, injector: Injector) => {
+      const middleware = map(meta.getMethodMiddleware(key), provider => provider(injector));
+      (<any>router)[this.method](data, middleware);
     });
   }
 }

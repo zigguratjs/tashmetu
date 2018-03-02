@@ -1,11 +1,12 @@
-import {classDecorator, propertyDecorator, TaggedClassAnnotation} from '@ziggurat/tiamat';
+import {classDecorator, propertyDecorator, Injector} from '@ziggurat/tiamat';
 import {RouterConfig, MiddlewareProvider} from './interfaces';
 import {RouterMethodDecorator} from './method';
+import {RouterDecorator} from './router';
 import {RouterMeta} from './meta';
 import * as express from 'express';
 
 export const router = classDecorator<RouterConfig>(
-  new TaggedClassAnnotation('tashmetu:router', ['tashmetu.Router']), {
+  new RouterDecorator(), {
     middleware: []
   });
 
@@ -26,12 +27,12 @@ export const del = propertyDecorator<string>(
 
 export const use = (handler: express.RequestHandler) => {
   return (target: any, key: string) => {
-    RouterMeta.get(target.constructor).addMiddleware(injector => handler, key);
+    RouterMeta.get(target.constructor).addMethodMiddleware(key, injector => handler);
   };
 };
 
 export const useProvider = (provider: MiddlewareProvider) => {
   return (target: any, key: string) => {
-    RouterMeta.get(target.constructor).addMiddleware(provider, key);
+    RouterMeta.get(target.constructor).addMethodMiddleware(key, provider);
   };
 };

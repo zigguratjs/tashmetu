@@ -1,9 +1,9 @@
 import * as express from 'express';
 import {injectable, factory} from '@ziggurat/tiamat';
-import {Factory} from './router';
+import {RouterFactory} from './router';
 
 @injectable()
-export class ServerFactory extends Factory {
+export class ServerFactory extends RouterFactory {
   public app(): express.Application {
     const app = express();
     this.applyDecorators(app);

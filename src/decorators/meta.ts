@@ -18,22 +18,19 @@ export class RouterMeta {
     return getMetadata<RouterMeta>('tashmetu:router-meta', target, RouterMeta);
   }
 
-  public onSetup(fn: (rt: express.Router, injector: Injector) => void) {
+  public onSetup(fn: (router: express.Router, injector: Injector) => void) {
     this.setupHandlers.push(fn);
   }
 
-  public addMiddleware(provider: MiddlewareProvider, key?: string) {
-    if (key) {
-      (this.methodMiddleware[key] = this.methodMiddleware[key] || []).push(provider);
-    }
-    return this;
+  public addMethodMiddleware(key: string, provider: MiddlewareProvider) {
+    (this.methodMiddleware[key] = this.methodMiddleware[key] || []).push(provider);
   }
 
-  public getMiddleware(key: string): MiddlewareProvider[] {
+  public getMethodMiddleware(key: string): MiddlewareProvider[] {
     return reverse(this.methodMiddleware[key]);
   }
 
-  public setup(rt: express.Router, injector: Injector) {
-    each(this.setupHandlers, (fn: Function) => fn(rt, injector));
+  public setup(router: express.Router, injector: Injector) {
+    each(this.setupHandlers, (fn: Function) => fn(router, injector));
   }
 }
