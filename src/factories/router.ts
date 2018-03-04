@@ -13,6 +13,6 @@ export class RouterFactory {
   }
 
   protected applyDecorators(router: express.Router) {
-    RouterMeta.get(this.constructor).setup(router, this.injector);
+    RouterMeta.get(this.constructor).setup(this, router, this.injector);
   }
 }

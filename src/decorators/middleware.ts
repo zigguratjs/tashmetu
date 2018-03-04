@@ -22,7 +22,7 @@ export class MiddlewareDecorator extends ClassDecorator<MiddlewareConfig[]> {
 
   public decorate(config: MiddlewareConfig[], target: any) {
     for (let mw of config || []) {
-      RouterMeta.get(target).onSetup((router, injector) => {
+      RouterMeta.get(target).onSetup((factory, router, injector) => {
         router.use(mw.path, this.createHandler(mw, injector));
       });
     }

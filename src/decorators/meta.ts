@@ -1,5 +1,6 @@
 import {Injector} from '@ziggurat/tiamat';
 import {MiddlewareProvider} from './interfaces';
+import {RouterFactory} from '../factories/router';
 import * as express from 'express';
 import {each, reverse} from 'lodash';
 
@@ -18,7 +19,7 @@ export class RouterMeta {
     return getMetadata<RouterMeta>('tashmetu:router-meta', target, RouterMeta);
   }
 
-  public onSetup(fn: (router: express.Router, injector: Injector) => void) {
+  public onSetup(fn: (factory: RouterFactory, router: express.Router, injector: Injector) => void) {
     this.setupHandlers.push(fn);
   }
 
@@ -30,7 +31,7 @@ export class RouterMeta {
     return reverse(this.methodMiddleware[key]);
   }
 
-  public setup(router: express.Router, injector: Injector) {
-    each(this.setupHandlers, (fn: Function) => fn(router, injector));
+  public setup(factory: RouterFactory, router: express.Router, injector: Injector) {
+    each(this.setupHandlers, (fn: Function) => fn(factory, router, injector));
   }
 }

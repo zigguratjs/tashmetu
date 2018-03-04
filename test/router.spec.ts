@@ -14,9 +14,16 @@ describe('RouterFactory', () => {
     key: 'test.Router'
   })
   class TestRouterFactory extends RouterFactory {
+    private foo: string;
+
+    public constructor() {
+      super();
+      this.foo = 'bar';
+    }
+
     @get('/')
     private async route(req: express.Request, res: express.Response): Promise<any> {
-      return {};
+      return {foo: this.foo};
     }
 
     @use(bodyParser.json())
@@ -47,7 +54,10 @@ describe('RouterFactory', () => {
   let app = bootstrap(TestComponent).get<express.Application>('express.Application');
 
   it('should add router factory by key', () => {
-    return request(app).get('/route').expect(200);
+    return request(app)
+      .get('/route')
+      .expect(200)
+      .then(res => expect(res.body).to.eql({foo: 'bar'}));
   });
 
   it('should add router factory by provider', () => {
