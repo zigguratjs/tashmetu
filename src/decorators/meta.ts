@@ -5,10 +5,10 @@ import * as express from 'express';
 import {each, reverse} from 'lodash';
 
 export function getMetadata<T>(key: string, target: any, Cls: any) {
-  if (!Reflect.hasOwnMetadata(key, target)) {
+  if (!Reflect.hasMetadata(key, target)) {
     Reflect.defineMetadata(key, new Cls(), target);
   }
-  return Reflect.getOwnMetadata(key, target);
+  return Reflect.getMetadata(key, target);
 }
 
 export class RouterMeta {
