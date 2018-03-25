@@ -1,9 +1,11 @@
-import {classDecorator, propertyDecorator, Injector} from '@ziggurat/tiamat';
-import {MiddlewareConfig, MiddlewareProvider} from './interfaces';
-import {RouterMethodDecorator} from './method';
-import {MiddlewareDecorator} from './middleware';
-import {RouterMeta} from './meta';
+import {classDecorator, propertyDecorator} from '@ziggurat/meta';
+import {Injector} from '@ziggurat/tiamat';
 import * as express from 'express';
+import {MiddlewareConfig, MiddlewareProvider} from './interfaces';
+import {GetMethodAnnotation, PostMethodAnnotation, PutMethodAnnotation,
+  PatchMethodAnnotation, DeleteMethodAnnotation,
+  UseAnnotation, UseProviderAnnotation} from './method';
+import {MiddlewareAnnotation} from './middleware';
 
 /**
  * Router-level middleware.
@@ -11,8 +13,8 @@ import * as express from 'express';
  * This decorator can be used to attach middleware to a router or server by decorating
  * the factory.
  */
-export const middleware = classDecorator<MiddlewareConfig[]>(
-  new MiddlewareDecorator());
+export const middleware = <(config: MiddlewareConfig[]) => any>
+  classDecorator(MiddlewareAnnotation, []);
 
 /**
  * HTTP GET request handler.
@@ -20,8 +22,8 @@ export const middleware = classDecorator<MiddlewareConfig[]>(
  * Decorate a router-method to turn it into a request handler.
  * Takes path as argument.
  */
-export const get = propertyDecorator<string>(
-  new RouterMethodDecorator('get'));
+export const get = <(path: string) => any>
+  propertyDecorator(GetMethodAnnotation);
 
 /**
  * HTTP POST request handler.
@@ -29,8 +31,8 @@ export const get = propertyDecorator<string>(
  * Decorate a router-method to turn it into a request handler.
  * Takes path as argument.
  */
-export const post = propertyDecorator<string>(
-  new RouterMethodDecorator('post'));
+export const post = <(path: string) => any>
+  propertyDecorator(PostMethodAnnotation);
 
 /**
  * HTTP PUT request handler.
@@ -38,8 +40,8 @@ export const post = propertyDecorator<string>(
  * Decorate a router-method to turn it into a request handler.
  * Takes path as argument.
  */
-export const put = propertyDecorator<string>(
-  new RouterMethodDecorator('put'));
+export const put = <(path: string) => any>
+  propertyDecorator(PutMethodAnnotation);
 
 /**
  * HTTP PATCH request handler.
@@ -47,8 +49,8 @@ export const put = propertyDecorator<string>(
  * Decorate a router-method to turn it into a request handler.
  * Takes path as argument.
  */
-export const patch = propertyDecorator<string>(
-  new RouterMethodDecorator('patch'));
+export const patch = <(path: string) => any>
+  propertyDecorator(PatchMethodAnnotation);
 
 /**
  * HTTP DELETE request handler.
@@ -56,27 +58,21 @@ export const patch = propertyDecorator<string>(
  * Decorate a router-method to turn it into a request handler.
  * Takes path as argument.
  */
-export const del = propertyDecorator<string>(
-  new RouterMethodDecorator('delete'));
+export const del = <(path: string) => any>
+  propertyDecorator(DeleteMethodAnnotation);
 
 /**
  * Method-level middleware
  *
  * Adds a middleware request handler to a router method.
  */
-export const use = (handler: express.RequestHandler) => {
-  return (target: any, key: string) => {
-    RouterMeta.get(target.constructor).addMethodMiddleware(key, injector => handler);
-  };
-};
+export const use = <(handler: express.RequestHandler) => any>
+  propertyDecorator(UseAnnotation);
 
 /**
  * Method-level middleware
  *
  * Adds a middleware request handler through a provider to a router method.
  */
-export const useProvider = (provider: MiddlewareProvider) => {
-  return (target: any, key: string) => {
-    RouterMeta.get(target.constructor).addMethodMiddleware(key, provider);
-  };
-};
+export const useProvider = <(provider: MiddlewareProvider) => any>
+  propertyDecorator(UseProviderAnnotation);

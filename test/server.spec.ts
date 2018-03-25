@@ -1,4 +1,4 @@
-import {bootstrap, component, factory, provider} from '@ziggurat/tiamat';
+import {bootstrap, component, factory, provider, inject} from '@ziggurat/tiamat';
 import {ServerFactory} from '../src/factories/server';
 import {get} from '../src/decorators';
 import {Tashmetu} from '../src/index';
@@ -6,8 +6,7 @@ import * as express from 'express';
 import * as request from 'supertest-as-promised';
 import 'mocha';
 
-describe('ServerFactory', () => {
-  @provider()
+describe('ServerFactory', async () => {
   class TestServerFactory extends ServerFactory {
     @factory({key: 'express.Application'})
     public app(): express.Application {
@@ -29,12 +28,18 @@ describe('ServerFactory', () => {
     providers: [TestServerFactory],
     dependencies: [Tashmetu]
   })
-  class TestComponent {}
+  class TestComponent {
+    @inject('express.Application') public app: express.Application;
+  }
 
-  let app = bootstrap(TestComponent).get<express.Application>('express.Application');
+  let app: express.Application;
 
-  describe('get decorator', () => {
-    it('should work with an async handler', () => {
+  before(async () => {
+    app = (await bootstrap(TestComponent)).app;
+  });
+
+  describe('get decorator', async () => {
+    it('should work with an async handler', async () => {
       return request(app).get('/asyncGet').expect(200);
     });
 

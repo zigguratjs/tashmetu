@@ -1,9 +1,19 @@
-import {ClassDecorator, Injector} from '@ziggurat/tiamat';
-import {MiddlewareProvider, MiddlewareConfig} from './interfaces';
-import {RouterMeta} from './meta';
+import {Injector} from '@ziggurat/tiamat';
 import * as express from 'express';
+import {MiddlewareProvider, MiddlewareConfig} from './interfaces';
+import {RouterFactory} from '../factories/router';
 
-export class MiddlewareDecorator extends ClassDecorator<MiddlewareConfig[]> {
+export class RouterSetupAnnotation {
+  public setup(factory: RouterFactory, router: express.Router, injector: Injector) {
+    return;
+  }
+}
+
+export class MiddlewareAnnotation extends RouterSetupAnnotation {
+  public constructor(
+    private config: MiddlewareConfig[]
+  ) { super(); }
+
   protected createHandler(config: MiddlewareConfig, injector: Injector): express.RequestHandler {
     if (config.handler) {
       return config.handler;
@@ -20,11 +30,9 @@ export class MiddlewareDecorator extends ClassDecorator<MiddlewareConfig[]> {
     }
   }
 
-  public decorate(config: MiddlewareConfig[], target: any) {
-    for (let mw of config || []) {
-      RouterMeta.get(target).onSetup((factory, router, injector) => {
-        router.use(mw.path, this.createHandler(mw, injector));
-      });
+  public setup(factory: RouterFactory, router: express.Router, injector: Injector) {
+    for (let mw of this.config || []) {
+      router.use(mw.path, this.createHandler(mw, injector));
     }
   }
 }

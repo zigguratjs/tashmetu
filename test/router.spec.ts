@@ -1,4 +1,4 @@
-import {bootstrap, component, factory, provider, Injector} from '@ziggurat/tiamat';
+import {bootstrap, component, factory, provider, inject, Injector} from '@ziggurat/tiamat';
 import {ServerFactory} from '../src/factories/server';
 import {RouterFactory} from '../src/factories/router';
 import {get, post, use, middleware} from '../src/decorators';
@@ -33,7 +33,6 @@ describe('RouterFactory', () => {
     }
   }
 
-  @provider()
   @middleware([
     {path: '/route',  router: 'test.Router'},
     {path: '/route2', router: injector => new TestRouterFactory()}
@@ -49,9 +48,15 @@ describe('RouterFactory', () => {
     providers: [TestServerFactory, TestRouterFactory],
     dependencies: [Tashmetu]
   })
-  class TestComponent {}
+  class TestComponent {
+    @inject('express.Application') public app: express.Application;
+  }
 
-  let app = bootstrap(TestComponent).get<express.Application>('express.Application');
+  let app: express.Application;
+
+  before(async () => {
+    app = (await bootstrap(TestComponent)).app;
+  });
 
   it('should add router factory by key', () => {
     return request(app)

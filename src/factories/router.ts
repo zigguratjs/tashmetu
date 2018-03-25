@@ -1,6 +1,8 @@
+import {getType} from 'reflect-helper';
 import * as express from 'express';
 import {inject, injectable, Injector} from '@ziggurat/tiamat';
-import {RouterMeta} from '../decorators/meta';
+import {RouterSetupAnnotation} from '../decorators/middleware';
+import {RouterMethodAnnotation} from '../decorators/method';
 
 @injectable()
 export class RouterFactory {
@@ -13,6 +15,11 @@ export class RouterFactory {
   }
 
   protected applyDecorators(router: express.Router) {
-    RouterMeta.get(this.constructor).setup(this, router, this.injector);
+    for (let annotation of getType(this.constructor).getAnnotations(RouterSetupAnnotation)) {
+      annotation.setup(this, router, this.injector);
+    }
+    for (let annotation of getType(this.constructor).getAnnotations(RouterMethodAnnotation, true)) {
+      annotation.setup(this, router, this.injector);
+    }
   }
 }
