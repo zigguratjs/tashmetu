@@ -5,12 +5,17 @@ import {RouterFactory} from '../factories/router';
 export type MiddlewareProvider = (injector: Injector) => express.RequestHandler;
 export type RouterFactoryProvider = (injector: Injector) => RouterFactory;
 
+/**
+ * Configuration options for router middleware.
+ */
 export interface MiddlewareConfig {
+  /**
+   * Path where the middleware should be mounted.
+   */
   path: string;
 
-  handler?: express.RequestHandler;
-
-  provider?: MiddlewareProvider;
-
-  router?: string | RouterFactoryProvider;
+  /**
+   * The provider of the middleware.
+   */
+  provider: MiddlewareProvider;
 }

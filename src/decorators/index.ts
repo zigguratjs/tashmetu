@@ -1,11 +1,24 @@
 import {classDecorator, propertyDecorator} from '@ziggurat/meta';
 import {Injector} from '@ziggurat/tiamat';
 import * as express from 'express';
-import {MiddlewareConfig, MiddlewareProvider} from './interfaces';
+import {MiddlewareConfig, MiddlewareProvider, RouterFactoryProvider} from './interfaces';
 import {GetMethodAnnotation, PostMethodAnnotation, PutMethodAnnotation,
   PatchMethodAnnotation, DeleteMethodAnnotation,
   UseAnnotation, UseProviderAnnotation} from './method';
 import {MiddlewareAnnotation} from './middleware';
+
+/**
+ * Provide middleware from a router factory.
+ */
+export function router(provider: RouterFactoryProvider | string): MiddlewareProvider {
+  return (injector: Injector) => {
+    if (typeof provider === 'string') {
+      return injector.get<any>(provider).router();
+    } else {
+      return provider(injector).router();
+    }
+  };
+}
 
 /**
  * Router-level middleware.
