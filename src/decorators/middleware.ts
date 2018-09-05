@@ -16,7 +16,7 @@ export class MiddlewareAnnotation extends RouterSetupAnnotation {
 
   public setup(factory: RouterFactory, router: express.Router, injector: Injector) {
     for (let mw of this.config || []) {
-      router.use(mw.path, mw.provider(injector));
+      router.use(mw.path, mw.producer(injector));
     }
   }
 }

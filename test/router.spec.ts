@@ -1,4 +1,4 @@
-import {bootstrap, component, factory, provider, inject, Injector} from '@ziggurat/tiamat';
+import {bootstrap, component, factory, provider, inject, aquire} from '@ziggurat/tiamat';
 import {ServerFactory} from '../src/factories/server';
 import {RouterFactory} from '../src/factories/router';
 import {get, post, use, middleware, router} from '../src/decorators';
@@ -26,7 +26,7 @@ describe('RouterFactory', () => {
       return {foo: this.foo};
     }
 
-    @use(bodyParser.json())
+    @use(() => bodyParser.json())
     @post('/post')
     private async postRoute(req: express.Request, res: express.Response): Promise<any> {
       return req.body;
@@ -34,8 +34,8 @@ describe('RouterFactory', () => {
   }
 
   @middleware([
-    {path: '/route',  provider: router(i => i.get('test.Router'))},
-    {path: '/route2', provider: router(() => new TestRouterFactory())}
+    {path: '/route',  producer: router(aquire('test.Router'))},
+    {path: '/route2', producer: router(() => new TestRouterFactory())}
   ])
   class TestServerFactory extends ServerFactory {
     @factory({key: 'express.Application'})

@@ -1,11 +1,11 @@
 import {classDecorator, propertyDecorator} from '@ziggurat/meta';
-import {Injector} from '@ziggurat/tiamat';
+import {Producer} from '@ziggurat/tiamat';
 import * as express from 'express';
-import {MiddlewareConfig, MiddlewareProvider, RouterFactoryProvider} from './interfaces';
+import {MiddlewareConfig} from './interfaces';
 import {GetMethodAnnotation, PostMethodAnnotation, PutMethodAnnotation,
-  PatchMethodAnnotation, DeleteMethodAnnotation,
-  UseAnnotation, UseProviderAnnotation} from './method';
+  PatchMethodAnnotation, DeleteMethodAnnotation, UseAnnotation} from './method';
 import {MiddlewareAnnotation} from './middleware';
+import {RouterFactory} from '../factories/router';
 
 /**
  * Mount a router as middleware.
@@ -13,10 +13,10 @@ import {MiddlewareAnnotation} from './middleware';
  * This function allows us to create a piece of middleware from a router factory so that the
  * routes created by it can be mounted on a server or another router.
  *
- * @param provider A provider function for a router factory.
+ * @param producer A producer function for a router factory.
  */
-export function router(provider: RouterFactoryProvider): MiddlewareProvider {
-  return (injector: Injector) => provider(injector).router();
+export function router(producer: Producer<RouterFactory>): Producer<express.RequestHandler> {
+  return injector => producer(injector).router();
 }
 
 /**
@@ -27,15 +27,15 @@ export function router(provider: RouterFactoryProvider): MiddlewareProvider {
  *
  * @usageNotes
  *
- * The decorator accepts a list of middleware given as a provider and a path where it should be
- * mounted. The provider is a function with the injector as its only argument that should return
+ * The decorator accepts a list of middleware given as a producer and a path where it should be
+ * mounted. The producer is a function with the injector as its only argument that should return
  * an express.RequestHandler.
  *
  * The following example shows how to mount a middleware for serving static files.
  *
  * ```typescript
  * @middleware([
- *   {path: '/static', provider: () => express.static('public')}
+ *   {path: '/static', producer: () => express.static('public')}
  * ])
  * ```
  */
@@ -90,15 +90,7 @@ export const del = <(path: string) => any>
 /**
  * Method-level middleware
  *
- * Adds a middleware request handler to a router method.
+ * Adds a middleware request handler through a producer to a router method.
  */
-export const use = <(handler: express.RequestHandler) => any>
+export const use = <(producer: Producer<express.RequestHandler>) => any>
   propertyDecorator(UseAnnotation);
-
-/**
- * Method-level middleware
- *
- * Adds a middleware request handler through a provider to a router method.
- */
-export const useProvider = <(provider: MiddlewareProvider) => any>
-  propertyDecorator(UseProviderAnnotation);
