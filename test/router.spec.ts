@@ -34,7 +34,7 @@ describe('RouterFactory', () => {
   }
 
   @middleware([
-    {path: '/route',  provider: router('test.Router')},
+    {path: '/route',  provider: router(i => i.get('test.Router'))},
     {path: '/route2', provider: router(() => new TestRouterFactory())}
   ])
   class TestServerFactory extends ServerFactory {

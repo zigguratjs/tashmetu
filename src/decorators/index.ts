@@ -8,16 +8,15 @@ import {GetMethodAnnotation, PostMethodAnnotation, PutMethodAnnotation,
 import {MiddlewareAnnotation} from './middleware';
 
 /**
- * Provide middleware from a router factory.
+ * Mount a router as middleware.
+ *
+ * This function allows us to create a piece of middleware from a router factory so that the
+ * routes created by it can be mounted on a server or another router.
+ *
+ * @param provider A provider function for a router factory.
  */
-export function router(provider: RouterFactoryProvider | string): MiddlewareProvider {
-  return (injector: Injector) => {
-    if (typeof provider === 'string') {
-      return injector.get<any>(provider).router();
-    } else {
-      return provider(injector).router();
-    }
-  };
+export function router(provider: RouterFactoryProvider): MiddlewareProvider {
+  return (injector: Injector) => provider(injector).router();
 }
 
 /**
