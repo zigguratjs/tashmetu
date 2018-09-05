@@ -25,6 +25,20 @@ export function router(provider: RouterFactoryProvider | string): MiddlewareProv
  *
  * This decorator can be used to attach middleware to a router or server by decorating
  * the factory.
+ *
+ * @usageNotes
+ *
+ * The decorator accepts a list of middleware given as a provider and a path where it should be
+ * mounted. The provider is a function with the injector as its only argument that should return
+ * an express.RequestHandler.
+ *
+ * The following example shows how to mount a middleware for serving static files.
+ *
+ * ```typescript
+ * @middleware([
+ *   {path: '/static', provider: () => express.static('public')}
+ * ])
+ * ```
  */
 export const middleware = <(config: MiddlewareConfig[]) => any>
   classDecorator(MiddlewareAnnotation, []);
