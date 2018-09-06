@@ -1,5 +1,5 @@
 import * as express from 'express';
-import {injectable, factory} from '@ziggurat/tiamat';
+import {injectable} from '@ziggurat/tiamat';
 import {RouterFactory} from './router';
 
 @injectable()

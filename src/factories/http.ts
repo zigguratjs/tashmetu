@@ -1,4 +1,4 @@
-import {inject, provider, factory} from '@ziggurat/tiamat';
+import {inject, factory} from '@ziggurat/tiamat';
 import * as express from 'express';
 import * as http from 'http';
 

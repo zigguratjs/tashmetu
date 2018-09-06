@@ -1,4 +1,4 @@
-import {inject, factory, provider} from '@ziggurat/tiamat';
+import {inject, factory} from '@ziggurat/tiamat';
 import * as http from 'http';
 import * as SocketIO from 'socket.io';
 
