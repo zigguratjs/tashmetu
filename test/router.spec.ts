@@ -37,12 +37,7 @@ describe('RouterFactory', () => {
     {path: '/route',  producer: router(aquire('test.Router'))},
     {path: '/route2', producer: router(() => new TestRouterFactory())}
   ])
-  class TestServerFactory extends ServerFactory {
-    @factory({key: 'express.Application'})
-    public app(): express.Application {
-      return super.app();
-    }
-  }
+  class TestServerFactory extends ServerFactory {}
 
   @component({
     providers: [TestServerFactory, TestRouterFactory],

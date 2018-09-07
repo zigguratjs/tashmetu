@@ -8,11 +8,6 @@ import 'mocha';
 
 describe('ServerFactory', async () => {
   class TestServerFactory extends ServerFactory {
-    @factory({key: 'express.Application'})
-    public app(): express.Application {
-      return super.app();
-    }
-
     @get('/asyncGet')
     private async asyncGet(req: express.Request, res: express.Response): Promise<any> {
       return {};
