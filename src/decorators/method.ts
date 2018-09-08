@@ -51,33 +51,3 @@ export class RouterMethodAnnotation {
     (<any>router)[this.method](this.path, middleware, handler);
   }
 }
-
-export class GetMethodAnnotation extends RouterMethodAnnotation {
-  public constructor(path: string, target: any, propertyKey: string) {
-    super('get', path, target, propertyKey);
-  }
-}
-
-export class PostMethodAnnotation extends RouterMethodAnnotation {
-  public constructor(path: string, target: any, propertyKey: string) {
-    super('post', path, target, propertyKey);
-  }
-}
-
-export class PutMethodAnnotation extends RouterMethodAnnotation {
-  public constructor(path: string, target: any, propertyKey: string) {
-    super('put', path, target, propertyKey);
-  }
-}
-
-export class PatchMethodAnnotation extends RouterMethodAnnotation {
-  public constructor(path: string, target: any, propertyKey: string) {
-    super('patch', path, target, propertyKey);
-  }
-}
-
-export class DeleteMethodAnnotation extends RouterMethodAnnotation {
-  public constructor(path: string, target: any, propertyKey: string) {
-    super('delete', path, target, propertyKey);
-  }
-}

@@ -2,8 +2,7 @@ import {classDecorator, propertyDecorator} from '@ziggurat/meta';
 import {Producer} from '@ziggurat/tiamat';
 import * as express from 'express';
 import {MiddlewareConfig} from './interfaces';
-import {GetMethodAnnotation, PostMethodAnnotation, PutMethodAnnotation,
-  PatchMethodAnnotation, DeleteMethodAnnotation, UseAnnotation} from './method';
+import {RouterMethodAnnotation, UseAnnotation} from './method';
 import {MiddlewareAnnotation} from './middleware';
 import {RouterFactory} from '../factories/router';
 
@@ -42,50 +41,23 @@ export function router(producer: Producer<RouterFactory>): Producer<express.Requ
 export const middleware = <(config: MiddlewareConfig[]) => any>
   classDecorator(MiddlewareAnnotation, []);
 
-/**
- * HTTP GET request handler.
- *
- * Decorate a router-method to turn it into a request handler.
- * Takes path as argument.
- */
-export const get = <(path: string) => any>
-  propertyDecorator(GetMethodAnnotation);
+const method = <(name: string, path: string) => any>
+  propertyDecorator(RouterMethodAnnotation);
 
-/**
- * HTTP POST request handler.
- *
- * Decorate a router-method to turn it into a request handler.
- * Takes path as argument.
- */
-export const post = <(path: string) => any>
-  propertyDecorator(PostMethodAnnotation);
+/** HTTP GET request handler. */
+export const get = (path: string) => method('get', path);
 
-/**
- * HTTP PUT request handler.
- *
- * Decorate a router-method to turn it into a request handler.
- * Takes path as argument.
- */
-export const put = <(path: string) => any>
-  propertyDecorator(PutMethodAnnotation);
+/** HTTP POST request handler. */
+export const post = (path: string) => method('post', path);
 
-/**
- * HTTP PATCH request handler.
- *
- * Decorate a router-method to turn it into a request handler.
- * Takes path as argument.
- */
-export const patch = <(path: string) => any>
-  propertyDecorator(PatchMethodAnnotation);
+/** HTTP PUT request handler. */
+export const put = (path: string) => method('put', path);
 
-/**
- * HTTP DELETE request handler.
- *
- * Decorate a router-method to turn it into a request handler.
- * Takes path as argument.
- */
-export const del = <(path: string) => any>
-  propertyDecorator(DeleteMethodAnnotation);
+/** HTTP PATCH request handler. */
+export const patch = (path: string) => method('patch', path);
+
+/** HTTP DELETE request handler. */
+export const del = (path: string) => method('delete', path);
 
 /**
  * Method-level middleware
