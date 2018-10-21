@@ -1,9 +1,10 @@
+import {Annotation} from '@ziggurat/meta';
 import {Injector} from '@ziggurat/tiamat';
 import * as express from 'express';
 import {MiddlewareConfig} from './interfaces';
 import {RouterFactory} from '../factories/router';
 
-export class RouterSetupAnnotation {
+export class RouterSetupAnnotation extends Annotation {
   public setup(factory: RouterFactory, router: express.Router, injector: Injector) {
     return;
   }

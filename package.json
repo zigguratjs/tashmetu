@@ -1,6 +1,6 @@
 {
   "name": "@ziggurat/tashmetu",
-  "version": "0.8.8",
+  "version": "0.8.9",
   "description": "Tashmetu is a server built on express",
   "scripts": {
     "test": "mocha --opts mocha.opts"
@@ -10,7 +10,7 @@
   "author": "Björn Andersson",
   "license": "MIT",
   "dependencies": {
-    "@ziggurat/meta": "^0.1.0",
+    "@ziggurat/meta": "^0.1.2",
     "express": "^4.14.0",
     "lodash": "^4.17.5",
     "reflect-helper": "^1.1.1",
@@ -25,7 +25,7 @@
     "@types/node": "8.0.14",
     "@types/socket.io": "^1.4.31",
     "@types/supertest-as-promised": "^2.0.35",
-    "@ziggurat/tiamat": "^0.8.15",
+    "@ziggurat/tiamat": "^0.9.3",
     "body-parser": "^1.18.2",
     "chai": "^4.1.2",
     "gulp": "^3.9.1",
@@ -41,6 +41,6 @@
     "typescript": "^2.1.5"
   },
   "peerDependencies": {
-    "@ziggurat/tiamat": "^0.8.15"
+    "@ziggurat/tiamat": "^0.9.3"
   }
 }

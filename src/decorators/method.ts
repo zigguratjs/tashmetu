@@ -1,10 +1,10 @@
-import {getType} from 'reflect-helper';
+import {Annotation} from '@ziggurat/meta';
 import {Injector, Producer} from '@ziggurat/tiamat';
 import * as express from 'express';
 import {map} from 'lodash';
 import {RouterFactory} from '../factories/router';
 
-export class MethodMiddlewareAnnotation {
+export class MethodMiddlewareAnnotation extends Annotation {
   public produce(injector: Injector): express.RequestHandler {
     throw Error('Method not implemented');
   }
@@ -20,13 +20,13 @@ export class UseAnnotation extends MethodMiddlewareAnnotation {
   }
 }
 
-export class RouterMethodAnnotation {
+export class RouterMethodAnnotation extends Annotation {
   public constructor(
     private method: string,
     private path: string,
     private target: any,
     private propertyKey: string
-  ) {}
+  ) { super(); }
 
   public setup(factory: RouterFactory, router: express.Router, injector: Injector) {
     let handler = (req: express.Request, res: express.Response, next: express.NextFunction) => {
@@ -45,9 +45,8 @@ export class RouterMethodAnnotation {
       }
     };
 
-    const type = getType(this.target.constructor);
-    const mwAnnotations = type.getAnnotations(MethodMiddlewareAnnotation);
-    const middleware = map(mwAnnotations, annotation => annotation.produce(injector));
+    const mwAnnotations = MethodMiddlewareAnnotation.onClass(this.target.constructor);
+    const middleware = map(mwAnnotations, a => a.produce(injector));
     (<any>router)[this.method](this.path, middleware, handler);
   }
 }
