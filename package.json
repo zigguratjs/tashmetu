@@ -1,6 +1,6 @@
 {
   "name": "@ziggurat/tashmetu",
-  "version": "0.8.9",
+  "version": "0.9.0",
   "description": "Tashmetu is a server built on express",
   "scripts": {
     "test": "mocha --opts mocha.opts"
@@ -25,7 +25,8 @@
     "@types/node": "8.0.14",
     "@types/socket.io": "^1.4.31",
     "@types/supertest-as-promised": "^2.0.35",
-    "@ziggurat/tiamat": "^0.9.3",
+    "@ziggurat/tiamat": "^0.11.1",
+    "@ziggurat/tiamat-inversify": "^0.1.0",
     "body-parser": "^1.18.2",
     "chai": "^4.1.2",
     "gulp": "^3.9.1",
@@ -41,6 +42,6 @@
     "typescript": "^2.1.5"
   },
   "peerDependencies": {
-    "@ziggurat/tiamat": "^0.9.3"
+    "@ziggurat/tiamat": "^0.11.1"
   }
 }

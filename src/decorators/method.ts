@@ -1,11 +1,11 @@
 import {Annotation} from '@ziggurat/meta';
-import {Injector, Producer} from '@ziggurat/tiamat';
+import {Container, Producer} from '@ziggurat/tiamat';
 import * as express from 'express';
 import {map} from 'lodash';
 import {RouterFactory} from '../factories/router';
 
 export class MethodMiddlewareAnnotation extends Annotation {
-  public produce(injector: Injector): express.RequestHandler {
+  public produce(container: Container): express.RequestHandler {
     throw Error('Method not implemented');
   }
 }
@@ -15,8 +15,8 @@ export class UseAnnotation extends MethodMiddlewareAnnotation {
     private producer: Producer<express.RequestHandler>
   ) { super(); }
 
-  public produce(injector: Injector): express.RequestHandler {
-    return this.producer(injector);
+  public produce(container: Container): express.RequestHandler {
+    return this.producer(container);
   }
 }
 
@@ -28,7 +28,7 @@ export class RouterMethodAnnotation extends Annotation {
     private propertyKey: string
   ) { super(); }
 
-  public setup(factory: RouterFactory, router: express.Router, injector: Injector) {
+  public setup(factory: RouterFactory, router: express.Router, container: Container) {
     let handler = (req: express.Request, res: express.Response, next: express.NextFunction) => {
       const result: any = (<any>factory)[this.propertyKey](req, res, next);
       if (result && result instanceof Promise) {
@@ -46,7 +46,7 @@ export class RouterMethodAnnotation extends Annotation {
     };
 
     const mwAnnotations = MethodMiddlewareAnnotation.onClass(this.target.constructor);
-    const middleware = map(mwAnnotations, a => a.produce(injector));
+    const middleware = map(mwAnnotations, a => a.produce(container));
     (<any>router)[this.method](this.path, middleware, handler);
   }
 }

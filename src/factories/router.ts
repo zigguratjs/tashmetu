@@ -1,24 +1,21 @@
 import * as express from 'express';
-import {inject, injectable, Injector} from '@ziggurat/tiamat';
+import {Container} from '@ziggurat/tiamat';
 import {RouterSetupAnnotation} from '../decorators/middleware';
 import {RouterMethodAnnotation} from '../decorators/method';
 
-@injectable()
 export class RouterFactory {
-  @inject('tiamat.Injector') private injector: Injector;
-
-  public router(): express.Router {
+  public router(container: Container): express.Router {
     let router = express.Router();
-    this.applyDecorators(router);
+    this.applyDecorators(router, container);
     return router;
   }
 
-  protected applyDecorators(router: express.Router) {
+  protected applyDecorators(router: express.Router, container: Container) {
     for (let annotation of RouterSetupAnnotation.onClass(this.constructor)) {
-      annotation.setup(this, router, this.injector);
+      annotation.setup(this, router, container);
     }
     for (let annotation of RouterMethodAnnotation.onClass(this.constructor, true)) {
-      annotation.setup(this, router, this.injector);
+      annotation.setup(this, router, container);
     }
   }
 }

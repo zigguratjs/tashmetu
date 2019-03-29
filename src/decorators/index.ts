@@ -15,7 +15,7 @@ import {RouterFactory} from '../factories/router';
  * @param producer A producer function for a router factory.
  */
 export function router(producer: Producer<RouterFactory>): Producer<express.RequestHandler> {
-  return injector => producer(injector).router();
+  return container => producer(container).router(container);
 }
 
 /**
@@ -27,7 +27,7 @@ export function router(producer: Producer<RouterFactory>): Producer<express.Requ
  * @usageNotes
  *
  * The decorator accepts a list of middleware given as a producer and a path where it should be
- * mounted. The producer is a function with the injector as its only argument that should return
+ * mounted. The producer is a function with the container as its only argument that should return
  * an express.RequestHandler.
  *
  * The following example shows how to mount a middleware for serving static files.

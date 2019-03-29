@@ -1,4 +1,5 @@
-import {bootstrap, component, factory, provider, inject} from '@ziggurat/tiamat';
+import {bootstrap, component} from '@ziggurat/tiamat';
+import {container} from '@ziggurat/tiamat-inversify';
 import {ServerFactory} from '../src/factories/server';
 import {get} from '../src/decorators';
 import {Tashmetu} from '../src/index';
@@ -21,16 +22,19 @@ describe('ServerFactory', async () => {
 
   @component({
     providers: [TestServerFactory],
-    dependencies: [Tashmetu]
+    dependencies: [Tashmetu],
+    inject: ['express.Application']
   })
   class TestComponent {
-    @inject('express.Application') public app: express.Application;
+    constructor(
+      public expressApp: express.Application
+    ) {}
   }
 
   let app: express.Application;
 
   before(async () => {
-    app = (await bootstrap(TestComponent)).app;
+    app = (await bootstrap(container(), TestComponent)).expressApp;
   });
 
   describe('get decorator', async () => {

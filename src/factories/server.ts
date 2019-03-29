@@ -1,5 +1,5 @@
 import * as express from 'express';
-import {injectable, factory} from '@ziggurat/tiamat';
+import {factory, Container} from '@ziggurat/tiamat';
 import {RouterFactory} from './router';
 
 /**
@@ -33,7 +33,6 @@ import {RouterFactory} from './router';
  * }
  * ```
  */
-@injectable()
 export class ServerFactory extends RouterFactory {
   /**
    * Creates an instance of express.Application.
@@ -46,8 +45,8 @@ export class ServerFactory extends RouterFactory {
    *
    * ```typescript
    * class Server extends ServerFactory {
-   *   public app(): express.Application {
-   *     return super.app().get('/', (req, res) => {
+   *   public app(container: Container): express.Application {
+   *     return super.app(container).get('/', (req, res) => {
    *       res.send('Hello world');
    *     });
    *   }
@@ -55,9 +54,9 @@ export class ServerFactory extends RouterFactory {
    * ```
    */
   @factory({key: 'express.Application'})
-  public app(): express.Application {
+  public app(container: Container): express.Application {
     const app = express();
-    this.applyDecorators(app);
+    this.applyDecorators(app, container);
     return app;
   }
 }

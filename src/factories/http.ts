@@ -1,9 +1,14 @@
-import {inject, factory} from '@ziggurat/tiamat';
+import {factory, provider} from '@ziggurat/tiamat';
 import * as express from 'express';
 import * as http from 'http';
 
+@provider({
+  inject: ['express.Application']
+})
 export class HttpServerFactory {
-  @inject('express.Application') private app: express.Application;
+  constructor(
+    private app: express.Application
+  ) {}
 
   @factory({key: 'http.Server'})
   public httpServer(): http.Server {
