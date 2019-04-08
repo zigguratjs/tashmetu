@@ -53,7 +53,10 @@ export class ServerFactory extends RouterFactory {
    * }
    * ```
    */
-  @factory({key: 'express.Application'})
+  @factory({
+    key: 'express.Application',
+    inject: ['tiamat.Container']
+  })
   public app(container: Container): express.Application {
     const app = express();
     this.applyDecorators(app, container);
