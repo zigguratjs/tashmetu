@@ -1,16 +1,27 @@
-import {component} from '@ziggurat/tiamat';
-
-import {HttpServerFactory} from './factories/http';
-import {SocketIOServerFactory} from './factories/socket';
+import {component, factory} from '@ziggurat/tiamat';
+import * as http from 'http';
+import * as SocketIO from 'socket.io';
+import * as express from 'express';
 
 export * from './decorators';
 export {RouterFactory} from './factories/router';
 export {ServerFactory} from './factories/server';
 
-@component({
-  providers: [
-    HttpServerFactory,
-    SocketIOServerFactory
-  ],
-})
-export class Tashmetu {}
+@component()
+export class Tashmetu {
+  @factory({
+    key: 'socket.io.Server',
+    inject: ['http.Server']
+  })
+  public socketIOServer(server: http.Server): SocketIO.Server {
+    return SocketIO(server);
+  }
+
+  @factory({
+    key: 'http.Server',
+    inject: ['express.Application']
+  })
+  public httpServer(app: express.Application): http.Server {
+    return http.createServer(app);
+  }
+}
