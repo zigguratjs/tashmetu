@@ -8,7 +8,7 @@ export {RouterFactory} from './factories/router';
 export {ServerFactory} from './factories/server';
 
 @component()
-export class Tashmetu {
+export default class Tashmetu {
   @factory({
     key: 'socket.io.Server',
     inject: ['http.Server']

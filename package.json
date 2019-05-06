@@ -1,6 +1,6 @@
 {
   "name": "@ziggurat/tashmetu",
-  "version": "0.10.1",
+  "version": "0.11.0",
   "description": "Tashmetu is a server built on express",
   "scripts": {
     "test": "mocha --opts mocha.opts"
@@ -42,6 +42,6 @@
     "typescript": "^2.1.5"
   },
   "peerDependencies": {
-    "@ziggurat/tiamat": "^0.13.0"
+    "@ziggurat/tiamat": "^0.14.3"
   }
 }

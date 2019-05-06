@@ -2,7 +2,7 @@ import {bootstrap, component} from '@ziggurat/tiamat';
 import {container} from '@ziggurat/tiamat-inversify';
 import {ServerFactory} from '../src/factories/server';
 import {get} from '../src/decorators';
-import {Tashmetu} from '../src/index';
+import Tashmetu from '../src/index';
 import * as express from 'express';
 import * as request from 'supertest-as-promised';
 import 'mocha';

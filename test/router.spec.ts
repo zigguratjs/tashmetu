@@ -3,7 +3,7 @@ import {container} from '@ziggurat/tiamat-inversify';
 import {ServerFactory} from '../src/factories/server';
 import {RouterFactory} from '../src/factories/router';
 import {get, post, use, middleware, router} from '../src/decorators';
-import {Tashmetu} from '../src/index';
+import Tashmetu from '../src/index';
 import * as express from 'express';
 import * as bodyParser from 'body-parser';
 import * as request from 'supertest-as-promised';
