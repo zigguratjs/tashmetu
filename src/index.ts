@@ -4,6 +4,7 @@ import * as SocketIO from 'socket.io';
 import * as express from 'express';
 
 export * from './decorators';
+export * from './resource';
 export {RouterFactory} from './factories/router';
 export {ServerFactory} from './factories/server';
 
