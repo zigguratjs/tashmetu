@@ -43,8 +43,9 @@ export class RouterMethodAnnotation extends Annotation {
       }
     };
 
-    const mwAnnotations = MethodMiddlewareAnnotation.onClass(this.target.constructor);
-    const middleware = mwAnnotations.map(a => a.produce(container));
+    const middleware = MethodMiddlewareAnnotation
+      .onClass(this.target.constructor)
+      .map(a => a.produce(container));
     (<any>router)[this.method](this.path, middleware, handler);
   }
 }
