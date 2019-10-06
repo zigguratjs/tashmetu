@@ -1,5 +1,4 @@
-import {classDecorator, propertyDecorator} from '@ziggurat/meta';
-import {Producer} from '@ziggurat/tiamat';
+import {classDecorator, propertyDecorator, Producer} from '@ziggurat/tiamat';
 import * as express from 'express';
 import {MiddlewareConfig} from './interfaces';
 import {RouterMethodAnnotation, UseAnnotation} from './method';

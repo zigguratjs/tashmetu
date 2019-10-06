@@ -1,7 +1,5 @@
-import {Annotation} from '@ziggurat/meta';
-import {Container, Producer} from '@ziggurat/tiamat';
+import {Annotation, Container, Producer} from '@ziggurat/tiamat';
 import * as express from 'express';
-import {map} from 'lodash';
 import {RouterFactory} from '../factories/router';
 
 export class MethodMiddlewareAnnotation extends Annotation {
@@ -46,7 +44,7 @@ export class RouterMethodAnnotation extends Annotation {
     };
 
     const mwAnnotations = MethodMiddlewareAnnotation.onClass(this.target.constructor);
-    const middleware = map(mwAnnotations, a => a.produce(container));
+    const middleware = mwAnnotations.map(a => a.produce(container));
     (<any>router)[this.method](this.path, middleware, handler);
   }
 }

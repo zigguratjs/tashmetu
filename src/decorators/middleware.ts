@@ -1,5 +1,4 @@
-import {Annotation} from '@ziggurat/meta';
-import {Container} from '@ziggurat/tiamat';
+import {Annotation, Container} from '@ziggurat/tiamat';
 import * as express from 'express';
 import {MiddlewareConfig} from './interfaces';
 import {RouterFactory} from '../factories/router';
