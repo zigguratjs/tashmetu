@@ -1,6 +1,4 @@
 import {bootstrap, component} from '@ziggurat/tiamat';
-import {container} from '@ziggurat/tiamat-inversify';
-import {Container} from 'inversify';
 import {ServerFactory} from '../src/factories/server';
 import {get} from '../src/decorators';
 import Tashmetu from '../src/index';
@@ -35,7 +33,7 @@ describe('ServerFactory', async () => {
   let app: express.Application;
 
   before(async () => {
-    app = (await bootstrap(container(new Container()), TestComponent)).expressApp;
+    app = (await bootstrap(TestComponent)).expressApp;
   });
 
   describe('get decorator', async () => {

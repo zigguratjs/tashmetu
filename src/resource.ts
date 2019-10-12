@@ -12,7 +12,7 @@ export function resource(collectionName: string, options?: ResourceOptions): Pro
   const {readOnly} = Object.assign({}, options, {readOnly: false});
 
   return container => {
-    const collection = container.get<Database>('ziggurat.Database').collection(collectionName);
+    const collection = container.resolve<Database>('ziggurat.Database').collection(collectionName);
     return readOnly
       ? new ReadOnlyResource(collection)
       : new ReadWriteResource(collection);

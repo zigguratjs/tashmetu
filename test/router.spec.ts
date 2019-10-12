@@ -1,6 +1,4 @@
 import {bootstrap, component, provider, aquire} from '@ziggurat/tiamat';
-import {container} from '@ziggurat/tiamat-inversify';
-import {Container} from 'inversify';
 import {ServerFactory} from '../src/factories/server';
 import {RouterFactory} from '../src/factories/router';
 import {get, post, use, middleware, router} from '../src/decorators';
@@ -55,7 +53,7 @@ describe('RouterFactory', () => {
   let app: express.Application;
 
   before(async () => {
-    app = (await bootstrap(container(new Container()), TestComponent)).expressApp;
+    app = (await bootstrap(TestComponent)).expressApp;
   });
 
   it('should add router factory by key', () => {
