@@ -1,9 +1,8 @@
 import {Collection} from '@ziggurat/ziggurat';
 import * as express from 'express';
+import {serializeError} from 'serialize-error';
 import {get} from '../decorators';
 import {RouterFactory} from '../factories/router';
-
-const serializeError = require('serialize-error');
 
 export class ReadOnlyResource extends RouterFactory {
   public constructor(protected collection: Collection) {

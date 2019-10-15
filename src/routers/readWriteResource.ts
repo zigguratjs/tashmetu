@@ -1,9 +1,8 @@
 import * as express from 'express';
 import * as bodyParser from 'body-parser';
+import {serializeError} from 'serialize-error';
 import {post, use} from '../decorators';
 import {ReadOnlyResource} from './readOnlyResource';
-
-const serializeError = require('serialize-error');
 
 export class ReadWriteResource extends ReadOnlyResource {
   @post('/')
