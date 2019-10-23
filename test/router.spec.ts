@@ -33,10 +33,10 @@ describe('RouterFactory', () => {
     }
   }
 
-  @middleware([
-    {path: '/route',  producer: router(aquire('test.Router'))},
-    {path: '/route2', producer: router(() => new TestRouterFactory())}
-  ])
+  @middleware({
+    '/route': router(aquire('test.Router')),
+    '/route2': router(() => new TestRouterFactory()),
+  })
   class TestServerFactory extends ServerFactory {}
 
   @component({

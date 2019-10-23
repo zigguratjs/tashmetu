@@ -25,19 +25,19 @@ export function router(producer: Producer<RouterFactory>): Producer<express.Requ
  *
  * @usageNotes
  *
- * The decorator accepts a list of middleware given as a producer and a path where it should be
+ * The decorator accepts a map of middleware given as a producer and a path where it should be
  * mounted. The producer is a function with the container as its only argument that should return
  * an express.RequestHandler.
  *
  * The following example shows how to mount a middleware for serving static files.
  *
  * ```typescript
- * @middleware([
- *   {path: '/static', producer: () => express.static('public')}
- * ])
+ * @middleware({
+ *   '/static': () => express.static('public')
+ * })
  * ```
  */
-export const middleware = <(config: MiddlewareConfig[]) => any>
+export const middleware = <(config: MiddlewareConfig) => any>
   classDecorator(MiddlewareAnnotation, []);
 
 const method = <(name: string, path: string) => any>
