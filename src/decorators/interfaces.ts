@@ -1,6 +1,15 @@
 import {Producer} from '@ziggurat/tiamat';
-import * as express from 'express';
+import {RouterFactory} from '../factories/router';
+import {RequestHandler} from 'express';
+
+/**
+ * Server middleware.
+ *
+ * If it is a string the middleware will be obtained from the container.
+ */
+export type Middleware =
+  Producer<RequestHandler> | Producer<RouterFactory> | RouterFactory | string;
 
 export type MiddlewareConfig = {
-  [path: string]: Producer<express.RequestHandler> | Producer<express.RequestHandler>[]
+  [path: string]: Middleware | Middleware[];
 };

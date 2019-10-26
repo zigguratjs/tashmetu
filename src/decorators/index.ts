@@ -3,19 +3,6 @@ import * as express from 'express';
 import {MiddlewareConfig} from './interfaces';
 import {RouterMethodAnnotation, UseAnnotation} from './method';
 import {MiddlewareAnnotation} from './middleware';
-import {RouterFactory} from '../factories/router';
-
-/**
- * Mount a router as middleware.
- *
- * This function allows us to create a piece of middleware from a router factory so that the
- * routes created by it can be mounted on a server or another router.
- *
- * @param producer A producer function for a router factory.
- */
-export function router(producer: Producer<RouterFactory>): Producer<express.RequestHandler> {
-  return container => producer(container).router(container);
-}
 
 /**
  * Router-level middleware.

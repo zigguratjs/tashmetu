@@ -1,7 +1,7 @@
-import {bootstrap, component, provider, aquire} from '@ziggurat/tiamat';
+import {bootstrap, component, provider} from '@ziggurat/tiamat';
 import {ServerFactory} from '../src/factories/server';
 import {RouterFactory} from '../src/factories/router';
-import {get, post, use, middleware, router} from '../src/decorators';
+import {get, post, use, middleware} from '../src/decorators';
 import Tashmetu from '../src/index';
 import * as express from 'express';
 import * as bodyParser from 'body-parser';
@@ -34,8 +34,8 @@ describe('RouterFactory', () => {
   }
 
   @middleware({
-    '/route': router(aquire('test.Router')),
-    '/route2': router(() => new TestRouterFactory()),
+    '/route': 'test.Router',
+    '/route2': new TestRouterFactory(),
   })
   class TestServerFactory extends ServerFactory {}
 

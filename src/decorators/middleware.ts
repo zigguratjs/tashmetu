@@ -1,10 +1,10 @@
-import {Annotation, Container, Producer} from '@ziggurat/tiamat';
-import * as express from 'express';
-import {MiddlewareConfig} from './interfaces';
+import {Annotation, Container} from '@ziggurat/tiamat';
+import {RequestHandler, Router} from 'express';
+import {MiddlewareConfig, Middleware} from './interfaces';
 import {RouterFactory} from '../factories/router';
 
 export class RouterSetupAnnotation extends Annotation {
-  public setup(factory: RouterFactory, router: express.Router, container: Container) {
+  public setup(factory: RouterFactory, router: Router, container: Container) {
     return;
   }
 }
@@ -14,10 +14,25 @@ export class MiddlewareAnnotation extends RouterSetupAnnotation {
     private config: MiddlewareConfig
   ) { super(); }
 
-  public setup(factory: RouterFactory, router: express.Router, container: Container) {
+  public setup(factory: RouterFactory, router: Router, container: Container) {
     for (let path of Object.keys(this.config)) {
-      const producers = ([] as Producer<express.RequestHandler>[]).concat(this.config[path]);
-      router.use(path, ...producers.map(producer => producer(container)));
+      router.use(path, ...([] as Middleware[]).concat(this.config[path])
+        .map(m => this.produce(m, container)));
+    }
+  }
+
+  private produce(middleware: Middleware, container: Container): RequestHandler {
+    if (typeof middleware === 'string') {
+      return this.produce(container.resolve<Middleware>(middleware), container);
+    }
+    if (middleware instanceof RouterFactory) {
+      return middleware.router(container);
+    }
+    const product = middleware(container);
+    if (product instanceof RouterFactory) {
+      return product.router(container);
+    } else {
+      return product;
     }
   }
 }
