@@ -49,8 +49,13 @@ export class Resource extends RouterFactory {
 
   @get('/:id')
   public async getOne(req: express.Request, res: express.Response) {
-    return this.formResponse(res, 200, false, () => {
-      return this.collection.findOne({_id: req.params.id});
+    return this.formResponse(res, 200, false, async () => {
+      try {
+        return await this.collection.findOne({_id: req.params.id});
+      } catch (err) {
+        res.statusCode = 404;
+        return serializeError(err);
+      }
     });
   }
 
@@ -75,7 +80,12 @@ export class Resource extends RouterFactory {
   @use(() => bodyParser.json())
   public async deleteOne(req: express.Request, res: express.Response) {
     return this.formResponse(res, 200, true, async () => {
-      return this.collection.remove({_id: req.params.id});
+      const docs = await this.collection.remove({_id: req.params.id});
+      if (docs.length === 0) {
+        res.statusCode = 404;
+        return Error('Document not found in collection');
+      }
+      return docs[0];
     });
   }
 
