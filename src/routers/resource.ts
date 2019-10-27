@@ -3,7 +3,7 @@ import {Collection, Database} from '@ziggurat/ziggurat';
 import * as express from 'express';
 import * as bodyParser from 'body-parser';
 import {serializeError} from 'serialize-error';
-import {get, post, use} from '../decorators';
+import {get, post, use, put, del} from '../decorators';
 import {RouterFactory} from '../factories/router';
 
 export interface ResourceConfig {
@@ -36,42 +36,64 @@ export class Resource extends RouterFactory {
 
   @get('/')
   public async getAll(req: express.Request, res: express.Response) {
-    let selector = this.parseJson(req.query.selector);
-    let options = this.parseJson(req.query.options);
-    let count = await this.collection.count(selector);
+    return this.formResponse(res, 200, false, async () => {
+      let selector = this.parseJson(req.query.selector);
+      let options = this.parseJson(req.query.options);
+      let count = await this.collection.count(selector);
 
-    res.setHeader('Content-Type', 'application/json');
-    res.setHeader('X-total-count', count.toString());
+      res.setHeader('X-total-count', count.toString());
 
-    return await this.collection.find(selector, options);
+      return this.collection.find(selector, options);
+    });
   }
 
   @get('/:id')
   public async getOne(req: express.Request, res: express.Response) {
-    try {
-      res.setHeader('Content-Type', 'application/json');
-      return await this.collection.findOne({_id: req.params.id});
-    } catch (err) {
-      res.status(500);
-      return serializeError(err);
-    }
+    return this.formResponse(res, 200, false, () => {
+      return this.collection.findOne({_id: req.params.id});
+    });
   }
 
   @post('/')
   @use(() => bodyParser.json())
   public async postOne(req: express.Request, res: express.Response) {
-    if (this.readOnly) {
+    return this.formResponse(res, 201, true, async () => {
+      return this.collection.upsert(req.body);
+    });
+  }
+
+  @put('/:id')
+  @use(() => bodyParser.json())
+  public async putOne(req: express.Request, res: express.Response) {
+    return this.formResponse(res, 200, true, async () => {
+      await this.collection.findOne({_id: req.params.id});
+      return this.collection.upsert(req.body);
+    });
+  }
+
+  @del('/:id')
+  @use(() => bodyParser.json())
+  public async deleteOne(req: express.Request, res: express.Response) {
+    return this.formResponse(res, 200, true, async () => {
+      return this.collection.remove({_id: req.params.id});
+    });
+  }
+
+  private async formResponse(
+    res: express.Response, statusCode: number, write: boolean, fn: () => Promise<any>
+  ) {
+    res.setHeader('Content-Type', 'application/json');
+
+    if (this.readOnly && write) {
       res.statusCode = 403;
       return serializeError(new Error('Resource is read only'));
-    } else {
-      try {
-        let result = await this.collection.upsert(req.body);
-        res.statusCode = 200;
-        return result;
-      } catch (err) {
-        res.statusCode = 500;
-        return serializeError(err);
-      }
+    }
+    try {
+      res.statusCode = statusCode;
+      return await fn();
+    } catch (err) {
+      res.statusCode = 500;
+      return serializeError(err);
     }
   }
 
