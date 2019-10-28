@@ -109,11 +109,24 @@ describe('Resource', () => {
       return request(app).delete('/readonly/doc1').expect(403);
     });
 
+    it('should fail when document does not exist ', () => {
+      return request(app)
+        .delete('/readwrite/doc4')
+        .expect(404);
+    });
+
     it('should delete and return document', () => {
       return request(app)
         .delete('/readwrite/doc3')
         .expect(200)
         .then(res => expect(res.body).to.eql({_id: 'doc3', foo: 'bar'}));
+    });
+
+    it('should have modified the collection', () => {
+      return request(app)
+        .get('/readwrite/doc3')
+        .expect(404)
+        .then(res => expect(res.body.message).to.eql('Failed to find document in collection'));
     });
   });
 });
