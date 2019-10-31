@@ -1,5 +1,6 @@
 import {Producer} from '@ziggurat/tiamat';
 import {Collection, Database} from '@ziggurat/ziggurat';
+import {SocketGateway} from '../gateway';
 import * as express from 'express';
 import * as bodyParser from 'body-parser';
 import * as SocketIO from 'socket.io';
@@ -20,22 +21,22 @@ export interface ResourceConfig {
  */
 export function resource(config: ResourceConfig): Producer<Router> {
   return container => {
-    return new Resource(
+    const instance = new Resource(
       container.resolve<Database>('ziggurat.Database').collection(config.collection),
-      container.resolve<SocketIO.Server>('socket.io.Server'),
       config.readOnly
     );
+    container.resolve<SocketGateway>('tashmetu.SocketGateway')
+      .register(instance, {namespace: '/ziggurat/' + config.collection});
+    return instance;
   };
 }
 
 export class Resource extends Router {
   public constructor(
     protected collection: Collection,
-    protected socket: SocketIO.Server,
     protected readOnly = false
   ) {
     super();
-    socket.on('connection', s => this.onConnection(s));
   }
 
   public onConnection(socket: SocketIO.Socket) {
