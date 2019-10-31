@@ -1,7 +1,7 @@
 import {bootstrap, component, provider} from '@ziggurat/tiamat';
-import {ServerFactory} from '../src/factories/server';
-import {RouterFactory} from '../src/factories/router';
-import {get, post, use, middleware} from '../src/decorators';
+import {Router} from '../src/factories/router';
+import {Server} from '../src/server';
+import {get, post, use} from '../src/decorators';
 import Tashmetu from '../src/index';
 import * as express from 'express';
 import * as bodyParser from 'body-parser';
@@ -9,11 +9,11 @@ import * as request from 'supertest-as-promised';
 import 'mocha';
 import {expect} from 'chai';
 
-describe('RouterFactory', () => {
+describe('Router', () => {
   @provider({
     key: 'test.Router'
   })
-  class TestRouterFactory extends RouterFactory {
+  class TestRouter extends Router {
     private foo: string;
 
     public constructor() {
@@ -33,27 +33,29 @@ describe('RouterFactory', () => {
     }
   }
 
-  @middleware({
-    '/route': 'test.Router',
-    '/route2': new TestRouterFactory(),
-  })
-  class TestServerFactory extends ServerFactory {}
-
   @component({
-    providers: [TestServerFactory, TestRouterFactory],
+    providers: [TestRouter],
     dependencies: [Tashmetu],
-    inject: ['express.Application']
+    instances: {
+      'tashmetu.ServerConfig': {
+        middleware: {
+          '/route': 'test.Router',
+          '/route2': new TestRouter(),
+        }
+      }
+    },
+    inject: ['tashmetu.Server']
   })
   class TestComponent {
     constructor(
-      public expressApp: express.Application
+      public server: Server
     ) {}
   }
 
   let app: express.Application;
 
   before(async () => {
-    app = (await bootstrap(TestComponent)).expressApp;
+    app = (await bootstrap(TestComponent)).server.app;
   });
 
   it('should add router factory by key', () => {

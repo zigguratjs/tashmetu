@@ -2,13 +2,16 @@ import {component, factory} from '@ziggurat/tiamat';
 import * as http from 'http';
 import * as SocketIO from 'socket.io';
 import * as express from 'express';
+import {Server} from './server';
 
 export * from './decorators';
 export * from './routers/resource';
-export {RouterFactory} from './factories/router';
-export {ServerFactory} from './factories/server';
+export {Router} from './factories/router';
+export {Server};
 
-@component()
+@component({
+  providers: [Server]
+})
 export default class Tashmetu {
   @factory({
     key: 'socket.io.Server',
@@ -24,5 +27,12 @@ export default class Tashmetu {
   })
   public httpServer(app: express.Application): http.Server {
     return http.createServer(app);
+  }
+
+  @factory({
+    key: 'express.Application'
+  })
+  public expressApp(): express.Application {
+    return express();
   }
 }

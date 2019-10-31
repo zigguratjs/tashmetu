@@ -1,6 +1,6 @@
 import {classDecorator, propertyDecorator, Producer} from '@ziggurat/tiamat';
 import * as express from 'express';
-import {MiddlewareConfig} from './interfaces';
+import {MiddlewareConfig} from '../interfaces';
 import {RouterMethodAnnotation, UseAnnotation} from './method';
 import {MiddlewareAnnotation} from './middleware';
 

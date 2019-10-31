@@ -1,5 +1,6 @@
 import {bootstrap, component} from '@ziggurat/tiamat';
-import {ServerFactory} from '../src/factories/server';
+import {Router} from '../src/factories/router';
+import {Server} from '../src/server';
 import {get} from '../src/decorators';
 import Tashmetu from '../src/index';
 import * as express from 'express';
@@ -7,7 +8,7 @@ import * as request from 'supertest-as-promised';
 import 'mocha';
 
 describe('ServerFactory', async () => {
-  class TestServerFactory extends ServerFactory {
+  class TestServerFactory extends Router {
     @get('/asyncGet')
     private async asyncGet(req: express.Request, res: express.Response): Promise<any> {
       return {};
@@ -20,20 +21,25 @@ describe('ServerFactory', async () => {
   }
 
   @component({
-    providers: [TestServerFactory],
+    providers: [],
     dependencies: [Tashmetu],
-    inject: ['express.Application']
+    instances: {
+      'tashmetu.ServerConfig': {
+        middleware: {'/': new TestServerFactory()}
+      }
+    },
+    inject: ['tashmetu.Server']
   })
   class TestComponent {
     constructor(
-      public expressApp: express.Application
+      public server: Server
     ) {}
   }
 
   let app: express.Application;
 
   before(async () => {
-    app = (await bootstrap(TestComponent)).expressApp;
+    app = (await bootstrap(TestComponent)).server.app;
   });
 
   describe('get decorator', async () => {

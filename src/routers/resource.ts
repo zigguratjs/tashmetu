@@ -2,9 +2,10 @@ import {Producer} from '@ziggurat/tiamat';
 import {Collection, Database} from '@ziggurat/ziggurat';
 import * as express from 'express';
 import * as bodyParser from 'body-parser';
+import * as SocketIO from 'socket.io';
 import {serializeError} from 'serialize-error';
 import {get, post, use, put, del} from '../decorators';
-import {RouterFactory} from '../factories/router';
+import {Router} from '../factories/router';
 
 export interface ResourceConfig {
   collection: string;
@@ -17,21 +18,36 @@ export interface ResourceConfig {
  *
  * This function creates a request handler that interacts with a Ziggurat database collection.
  */
-export function resource(config: ResourceConfig): Producer<RouterFactory> {
+export function resource(config: ResourceConfig): Producer<Router> {
   return container => {
     return new Resource(
       container.resolve<Database>('ziggurat.Database').collection(config.collection),
+      container.resolve<SocketIO.Server>('socket.io.Server'),
       config.readOnly
     );
   };
 }
 
-export class Resource extends RouterFactory {
+export class Resource extends Router {
   public constructor(
     protected collection: Collection,
+    protected socket: SocketIO.Server,
     protected readOnly = false
   ) {
     super();
+    socket.on('connection', s => this.onConnection(s));
+  }
+
+  public onConnection(socket: SocketIO.Socket) {
+    this.collection.on('document-upserted', doc => {
+      socket.emit('document-upserted', doc, this.collection.name);
+    });
+    this.collection.on('document-removed', doc => {
+      socket.emit('document-removed', doc, this.collection.name);
+    });
+    this.collection.on('document-error', err => {
+      socket.emit('document-error', err, this.collection.name);
+    });
   }
 
   @get('/')

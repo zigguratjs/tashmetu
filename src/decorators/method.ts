@@ -1,6 +1,6 @@
 import {Annotation, Container, Producer} from '@ziggurat/tiamat';
 import * as express from 'express';
-import {RouterFactory} from '../factories/router';
+import {Router} from '../factories/router';
 
 export class MethodMiddlewareAnnotation extends Annotation {
   public produce(container: Container): express.RequestHandler {
@@ -26,9 +26,9 @@ export class RouterMethodAnnotation extends Annotation {
     private propertyKey: string
   ) { super(); }
 
-  public setup(factory: RouterFactory, router: express.Router, container: Container) {
+  public setup(router: Router, container: Container) {
     let handler = (req: express.Request, res: express.Response, next: express.NextFunction) => {
-      const result: any = (<any>factory)[this.propertyKey](req, res, next);
+      const result: any = (<any>router)[this.propertyKey](req, res, next);
       if (result && result instanceof Promise) {
         result.then((value: any) => {
           if (value && !res.headersSent) {
@@ -46,6 +46,6 @@ export class RouterMethodAnnotation extends Annotation {
     const middleware = MethodMiddlewareAnnotation
       .onClass(this.target.constructor)
       .map(a => a.produce(container));
-    (<any>router)[this.method](this.path, middleware, handler);
+    router.useMethod(this.method, this.path, ...middleware, handler);
   }
 }

@@ -1,42 +1,40 @@
 import {bootstrap, component} from '@ziggurat/tiamat';
 import {memory} from '@ziggurat/ziggurat';
-import {ServerFactory} from '../src/factories/server';
-import {middleware} from '../src/decorators';
 import Tashmetu, { resource } from '../src';
+import {Server} from '../src/server';
 import * as express from 'express';
 import * as request from 'supertest-as-promised';
 import 'mocha';
 import {expect} from 'chai';
 
 describe('Resource', () => {
-  @middleware({
-    '/readonly': resource({collection: 'test', readOnly: true}),
-    '/readwrite': resource({collection: 'test', readOnly: false}),
-  })
-  class TestServerFactory extends ServerFactory {}
-
   @component({
-    providers: [TestServerFactory],
     dependencies: [Tashmetu, import('@ziggurat/ziggurat')],
-    inject: ['express.Application'],
     instances: {
       'ziggurat.DatabaseConfig': {
         collections: {
           'test': memory([{_id: 'doc1'}, {_id: 'doc2'}])
         }
+      },
+      'tashmetu.ServerConfig': {
+        middleware: {
+          '/readonly': resource({collection: 'test', readOnly: true}),
+          '/readwrite': resource({collection: 'test', readOnly: false}),
+        }
       }
-    }
+    },
+    inject: ['tashmetu.Server']
   })
   class TestComponent {
     constructor(
-      public expressApp: express.Application,
+      public server: Server
     ) {}
   }
 
   let app: express.Application;
 
   before(async () => {
-    app = (await bootstrap(TestComponent)).expressApp;
+    app = (await bootstrap(TestComponent)).server.app;
   });
 
   describe('get', () => {
