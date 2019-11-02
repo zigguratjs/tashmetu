@@ -3,7 +3,8 @@ import * as http from 'http';
 import * as SocketIO from 'socket.io';
 import {provider, Container, Optional} from '@ziggurat/tiamat';
 import {ServerConfig} from './interfaces';
-import {configureRouter} from './middleware';
+import {Router} from './router';
+
 
 @provider({
   key: 'tashmetu.Server',
@@ -15,7 +16,7 @@ import {configureRouter} from './middleware';
     Optional.of('tashmetu.ServerConfig'),
   ]
 })
-export class Server {
+export class Server extends Router {
   public constructor(
     public app: express.Application,
     public server: http.Server,
@@ -23,8 +24,9 @@ export class Server {
     container: Container,
     config: ServerConfig | undefined,
   ) {
+    super(app);
     if (config) {
-      configureRouter(app, config.middleware, container);
+      this.applyMiddleware(config.middleware, container);
     }
   }
 

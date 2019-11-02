@@ -1,6 +1,6 @@
 import {Annotation, Container, Resolver} from '@ziggurat/tiamat';
 import * as express from 'express';
-import {Router} from '../factories/router';
+import {Router} from '../router';
 
 export class RouterMethodAnnotation extends Annotation {
   public constructor(

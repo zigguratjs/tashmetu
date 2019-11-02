@@ -1,5 +1,5 @@
 import {bootstrap, component, Lookup} from '@ziggurat/tiamat';
-import {Router} from '../src/factories/router';
+import {Router} from '../src/router';
 import {Server} from '../src/server';
 import {get, post} from '../src/decorators';
 import {ServerConfig} from '../src/interfaces';

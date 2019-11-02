@@ -7,7 +7,7 @@ import {Server} from './server';
 
 export * from './decorators';
 export * from './routers/resource';
-export {Router} from './factories/router';
+export {Router} from './router';
 export {Server};
 
 @component({

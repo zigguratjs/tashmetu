@@ -1,7 +1,6 @@
 import {Annotation, Container} from '@ziggurat/tiamat';
 import {MiddlewareConfig} from '../interfaces';
-import {Router} from '../factories/router';
-import {configureRouter} from '../middleware';
+import {Router} from '../router';
 
 export class RouterSetupAnnotation extends Annotation {
   public setup(router: Router, container: Container) {
@@ -15,6 +14,6 @@ export class MiddlewareAnnotation extends RouterSetupAnnotation {
   ) { super(); }
 
   public setup(router: Router, container: Container) {
-    configureRouter(router.expressRouter, this.config, container);
+    router.applyMiddleware(this.config, container);
   }
 }

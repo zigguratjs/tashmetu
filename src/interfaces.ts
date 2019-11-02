@@ -1,5 +1,5 @@
 import {Resolver} from '@ziggurat/tiamat';
-import {Router} from './factories/router';
+import {Router} from './router';
 import {RequestHandler} from 'express';
 
 /**

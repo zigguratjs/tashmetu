@@ -5,7 +5,7 @@ import * as bodyParser from 'body-parser';
 import * as SocketIO from 'socket.io';
 import {serializeError} from 'serialize-error';
 import {get, post, put, del} from '../decorators';
-import {Router} from '../factories/router';
+import {Router} from '../router';
 
 export interface ResourceConfig {
   collection: string;
