@@ -7,7 +7,6 @@ import * as express from 'express';
  * Routes can be added by decorating methods.
  *
  * ```typescript
- * @provider({key: 'MyRouter'})
  * class MyRouter extends Router {
  *   @get('/')
  *   private root(req: express.Request, res: express.Response) {
@@ -23,7 +22,7 @@ import * as express from 'express';
  *   instances: {
  *     'tashmetu.ServerConfig': {
  *        middleware: {
- *          '/': 'MyRouter'
+ *          '/': Lookup.of(MyRouter)
  *        }
  *      }
  *   }

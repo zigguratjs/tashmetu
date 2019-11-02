@@ -1,7 +1,8 @@
-import {bootstrap, component, provider} from '@ziggurat/tiamat';
+import {bootstrap, component, Lookup} from '@ziggurat/tiamat';
 import {Router} from '../src/factories/router';
 import {Server} from '../src/server';
 import {get, post, use} from '../src/decorators';
+import {ServerConfig} from '../src/interfaces';
 import Tashmetu from '../src/index';
 import * as express from 'express';
 import * as bodyParser from 'body-parser';
@@ -10,9 +11,6 @@ import 'mocha';
 import {expect} from 'chai';
 
 describe('Router', () => {
-  @provider({
-    key: 'test.Router'
-  })
   class TestRouter extends Router {
     private foo: string;
 
@@ -39,10 +37,10 @@ describe('Router', () => {
     instances: {
       'tashmetu.ServerConfig': {
         middleware: {
-          '/route': 'test.Router',
+          '/route': Lookup.of(TestRouter),
           '/route2': new TestRouter(),
         }
-      }
+      } as ServerConfig
     },
     inject: ['tashmetu.Server']
   })
@@ -58,14 +56,14 @@ describe('Router', () => {
     app = (await bootstrap(TestComponent)).server.app;
   });
 
-  it('should add router factory by key', () => {
+  it('should add router by resolver', () => {
     return request(app)
       .get('/route')
       .expect(200)
       .then(res => expect(res.body).to.eql({foo: 'bar'}));
   });
 
-  it('should add router factory by provider', () => {
+  it('should add router by instance', () => {
     return request(app).get('/route2').expect(200);
   });
 

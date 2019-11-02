@@ -8,7 +8,7 @@ import {RequestHandler} from 'express';
  * If it is a string the middleware will be obtained from the container.
  */
 export type Middleware =
-  RequestHandler | Resolver<RequestHandler> | Router | Resolver<Router> | string;
+  RequestHandler | Router | Resolver<RequestHandler | Router>;
 
 export type MiddlewareConfig = {
   [path: string]: Middleware | Middleware[];

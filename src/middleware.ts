@@ -17,9 +17,6 @@ export function configureRouter(
 export function requestHandler(
   middleware: Middleware, container: Container
 ): express.RequestHandler {
-  if (typeof middleware === 'string') {
-    return requestHandler(container.resolve<Middleware>(middleware), container);
-  }
   if (middleware instanceof Router) {
     return applyDecorators(middleware, container);
   }

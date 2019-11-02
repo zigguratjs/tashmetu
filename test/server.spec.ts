@@ -1,4 +1,4 @@
-import {bootstrap, component} from '@ziggurat/tiamat';
+import {bootstrap, component, Lookup} from '@ziggurat/tiamat';
 import {Router} from '../src/factories/router';
 import {Server} from '../src/server';
 import {get} from '../src/decorators';
@@ -21,11 +21,11 @@ describe('ServerFactory', async () => {
   }
 
   @component({
-    providers: [],
+    providers: [TestServerFactory],
     dependencies: [Tashmetu],
     instances: {
       'tashmetu.ServerConfig': {
-        middleware: {'/': new TestServerFactory()}
+        middleware: {'/': Lookup.of(TestServerFactory)}
       }
     },
     inject: ['tashmetu.Server']
