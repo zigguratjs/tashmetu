@@ -1,4 +1,4 @@
-import {Producer} from '@ziggurat/tiamat';
+import {Injection, Resolver} from '@ziggurat/tiamat';
 import {Collection, Database} from '@ziggurat/ziggurat';
 import {SocketGateway} from '../gateway';
 import * as express from 'express';
@@ -19,16 +19,12 @@ export interface ResourceConfig {
  *
  * This function creates a request handler that interacts with a Ziggurat database collection.
  */
-export function resource(config: ResourceConfig): Producer<Router> {
-  return container => {
-    const instance = new Resource(
-      container.resolve<Database>('ziggurat.Database').collection(config.collection),
-      config.readOnly
-    );
-    container.resolve<SocketGateway>('tashmetu.SocketGateway')
-      .register(instance, {namespace: '/ziggurat/' + config.collection});
+export function resource(config: ResourceConfig): Resolver<Router> {
+  return Injection.of((db: Database, gateway: SocketGateway) => {
+    const instance = new Resource(db.collection(config.collection), config.readOnly);
+    gateway.register(instance, {namespace: '/ziggurat/' + config.collection});
     return instance;
-  };
+  }, ['ziggurat.Database', 'tashmetu.SocketGateway']);
 }
 
 export class Resource extends Router {
@@ -77,7 +73,7 @@ export class Resource extends Router {
   }
 
   @post('/')
-  @use(() => bodyParser.json())
+  @use(bodyParser.json())
   public async postOne(req: express.Request, res: express.Response) {
     return this.formResponse(res, 201, true, async () => {
       return this.collection.upsert(req.body);
@@ -85,7 +81,7 @@ export class Resource extends Router {
   }
 
   @put('/:id')
-  @use(() => bodyParser.json())
+  @use(bodyParser.json())
   public async putOne(req: express.Request, res: express.Response) {
     return this.formResponse(res, 200, true, async () => {
       await this.collection.findOne({_id: req.params.id});
@@ -94,7 +90,7 @@ export class Resource extends Router {
   }
 
   @del('/:id')
-  @use(() => bodyParser.json())
+  @use(bodyParser.json())
   public async deleteOne(req: express.Request, res: express.Response) {
     return this.formResponse(res, 200, true, async () => {
       const docs = await this.collection.remove({_id: req.params.id});

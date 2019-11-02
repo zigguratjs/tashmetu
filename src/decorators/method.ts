@@ -1,6 +1,8 @@
-import {Annotation, Container, Producer} from '@ziggurat/tiamat';
+import {Annotation, Container} from '@ziggurat/tiamat';
 import * as express from 'express';
 import {Router} from '../factories/router';
+import {Middleware} from '../interfaces';
+import {requestHandler} from '../middleware';
 
 export class MethodMiddlewareAnnotation extends Annotation {
   public produce(container: Container): express.RequestHandler {
@@ -10,11 +12,11 @@ export class MethodMiddlewareAnnotation extends Annotation {
 
 export class UseAnnotation extends MethodMiddlewareAnnotation {
   public constructor(
-    private producer: Producer<express.RequestHandler>
+    private middleware: Middleware
   ) { super(); }
 
   public produce(container: Container): express.RequestHandler {
-    return this.producer(container);
+    return requestHandler(this.middleware, container);
   }
 }
 

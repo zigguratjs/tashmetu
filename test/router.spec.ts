@@ -26,7 +26,7 @@ describe('Router', () => {
       return {foo: this.foo};
     }
 
-    @use(() => bodyParser.json())
+    @use(bodyParser.json())
     @post('/post')
     private async postRoute(req: express.Request, res: express.Response): Promise<any> {
       return req.body;
