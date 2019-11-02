@@ -1,11 +1,10 @@
 import {Injection, Resolver} from '@ziggurat/tiamat';
 import {Collection, Database} from '@ziggurat/ziggurat';
-import {SocketGateway} from '../gateway';
 import * as express from 'express';
 import * as bodyParser from 'body-parser';
 import * as SocketIO from 'socket.io';
 import {serializeError} from 'serialize-error';
-import {get, post, use, put, del} from '../decorators';
+import {get, post, put, del} from '../decorators';
 import {Router} from '../factories/router';
 
 export interface ResourceConfig {
@@ -20,11 +19,9 @@ export interface ResourceConfig {
  * This function creates a request handler that interacts with a Ziggurat database collection.
  */
 export function resource(config: ResourceConfig): Resolver<Router> {
-  return Injection.of((db: Database, gateway: SocketGateway) => {
-    const instance = new Resource(db.collection(config.collection), config.readOnly);
-    gateway.register(instance, {namespace: '/ziggurat/' + config.collection});
-    return instance;
-  }, ['ziggurat.Database', 'tashmetu.SocketGateway']);
+  return Injection.of((db: Database) => {
+    return new Resource(db.collection(config.collection), config.readOnly);
+  }, ['ziggurat.Database']);
 }
 
 export class Resource extends Router {
@@ -72,16 +69,14 @@ export class Resource extends Router {
     });
   }
 
-  @post('/')
-  @use(bodyParser.json())
+  @post('/', bodyParser.json())
   public async postOne(req: express.Request, res: express.Response) {
     return this.formResponse(res, 201, true, async () => {
       return this.collection.upsert(req.body);
     });
   }
 
-  @put('/:id')
-  @use(bodyParser.json())
+  @put('/:id', bodyParser.json())
   public async putOne(req: express.Request, res: express.Response) {
     return this.formResponse(res, 200, true, async () => {
       await this.collection.findOne({_id: req.params.id});
@@ -89,8 +84,7 @@ export class Resource extends Router {
     });
   }
 
-  @del('/:id')
-  @use(bodyParser.json())
+  @del('/:id', bodyParser.json())
   public async deleteOne(req: express.Request, res: express.Response) {
     return this.formResponse(res, 200, true, async () => {
       const docs = await this.collection.remove({_id: req.params.id});

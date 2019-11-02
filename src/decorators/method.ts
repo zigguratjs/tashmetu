@@ -1,29 +1,12 @@
-import {Annotation, Container} from '@ziggurat/tiamat';
+import {Annotation, Container, Resolver} from '@ziggurat/tiamat';
 import * as express from 'express';
 import {Router} from '../factories/router';
-import {Middleware} from '../interfaces';
-import {requestHandler} from '../middleware';
-
-export class MethodMiddlewareAnnotation extends Annotation {
-  public produce(container: Container): express.RequestHandler {
-    throw Error('Method not implemented');
-  }
-}
-
-export class UseAnnotation extends MethodMiddlewareAnnotation {
-  public constructor(
-    private middleware: Middleware
-  ) { super(); }
-
-  public produce(container: Container): express.RequestHandler {
-    return requestHandler(this.middleware, container);
-  }
-}
 
 export class RouterMethodAnnotation extends Annotation {
   public constructor(
     private method: string,
     private path: string,
+    private middleware: (express.RequestHandler | Resolver<express.RequestHandler>)[],
     private target: any,
     private propertyKey: string
   ) { super(); }
@@ -45,9 +28,9 @@ export class RouterMethodAnnotation extends Annotation {
       }
     };
 
-    const middleware = MethodMiddlewareAnnotation
-      .onClass(this.target.constructor)
-      .map(a => a.produce(container));
+    const middleware: express.RequestHandler[] = this.middleware.map(m =>
+      m instanceof Resolver ? m.resolve(container) : m
+    );
     router.useMethod(this.method, this.path, ...middleware, handler);
   }
 }

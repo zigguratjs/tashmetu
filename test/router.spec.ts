@@ -1,7 +1,7 @@
 import {bootstrap, component, Lookup} from '@ziggurat/tiamat';
 import {Router} from '../src/factories/router';
 import {Server} from '../src/server';
-import {get, post, use} from '../src/decorators';
+import {get, post} from '../src/decorators';
 import {ServerConfig} from '../src/interfaces';
 import Tashmetu from '../src/index';
 import * as express from 'express';
@@ -24,8 +24,7 @@ describe('Router', () => {
       return {foo: this.foo};
     }
 
-    @use(bodyParser.json())
-    @post('/post')
+    @post('/post', bodyParser.json())
     private async postRoute(req: express.Request, res: express.Response): Promise<any> {
       return req.body;
     }
