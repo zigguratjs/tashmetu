@@ -1,6 +1,5 @@
 import {bootstrap, component, Lookup} from '@ziggurat/tiamat';
-import {Router} from '../src/router';
-import {Server} from '../src/server';
+import {Server} from '../src/interfaces';
 import {get, post} from '../src/decorators';
 import {ServerConfig} from '../src/interfaces';
 import Tashmetu from '../src/index';
@@ -11,11 +10,10 @@ import 'mocha';
 import {expect} from 'chai';
 
 describe('Router', () => {
-  class TestRouter extends Router {
+  class TestRouter {
     private foo: string;
 
     public constructor() {
-      super();
       this.foo = 'bar';
     }
 
@@ -49,10 +47,10 @@ describe('Router', () => {
     ) {}
   }
 
-  let app: express.Application;
+  let app: Server;
 
   before(async () => {
-    app = (await bootstrap(TestComponent)).server.app;
+    app = (await bootstrap(TestComponent)).server;
   });
 
   it('should add router by resolver', () => {

@@ -1,6 +1,6 @@
-import {classDecorator, propertyDecorator, Resolver} from '@ziggurat/tiamat';
 import {RequestHandler} from 'express';
-import {MiddlewareConfig} from '../interfaces';
+import {classDecorator, propertyDecorator, Resolver} from '@ziggurat/tiamat';
+import {RouteMap} from '../interfaces';
 import {RouterMethodAnnotation} from './method';
 import {MiddlewareAnnotation} from './middleware';
 
@@ -21,7 +21,7 @@ import {MiddlewareAnnotation} from './middleware';
  * })
  * ```
  */
-export const middleware = <(config: MiddlewareConfig) => any>
+export const middleware = <(config: RouteMap) => any>
   classDecorator(MiddlewareAnnotation, {});
 
 const method = <(name: string, path: string, mw: (RequestHandler | Resolver<RequestHandler>)[]) => any>

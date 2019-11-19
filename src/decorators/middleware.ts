@@ -1,19 +1,18 @@
-import {Annotation, Container} from '@ziggurat/tiamat';
-import {MiddlewareConfig} from '../interfaces';
-import {Router} from '../router';
+import {Annotation} from '@ziggurat/tiamat';
+import {Route, RouteMap, makeRoutes} from '../interfaces';
 
-export class RouterSetupAnnotation extends Annotation {
-  public setup(router: Router, container: Container) {
-    return;
+export class RouterAnnotation extends Annotation {
+  public routes(controller: any): Route[] {
+    return [];
   }
 }
 
-export class MiddlewareAnnotation extends RouterSetupAnnotation {
+export class MiddlewareAnnotation extends RouterAnnotation {
   public constructor(
-    private config: MiddlewareConfig
+    private config: RouteMap
   ) { super(); }
 
-  public setup(router: Router, container: Container) {
-    router.applyMiddleware(this.config, container);
+  public routes(controller: any) {
+    return makeRoutes(this.config);
   }
 }

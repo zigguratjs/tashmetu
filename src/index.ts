@@ -2,16 +2,15 @@ import {component, factory} from '@ziggurat/tiamat';
 import * as http from 'http';
 import * as SocketIO from 'socket.io';
 import * as express from 'express';
+import {TashmetuServer} from './server';
 import {SocketGateway} from './gateway';
-import {Server} from './server';
 
 export * from './decorators';
+export * from './interfaces';
 export * from './routers/resource';
-export {Router} from './router';
-export {Server};
 
 @component({
-  providers: [SocketGateway, Server]
+  providers: [SocketGateway, TashmetuServer]
 })
 export default class Tashmetu {
   @factory({

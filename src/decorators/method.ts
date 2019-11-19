@@ -1,36 +1,24 @@
-import {Annotation, Container, Resolver} from '@ziggurat/tiamat';
-import * as express from 'express';
-import {Router} from '../router';
+import {RequestHandler} from 'express';
+import {Resolver} from '@ziggurat/tiamat';
+import {RouterAnnotation} from './middleware';
+import {Route, RouteMethod} from '../interfaces';
 
-export class RouterMethodAnnotation extends Annotation {
+export class RouterMethodAnnotation extends RouterAnnotation {
   public constructor(
-    private method: string,
+    private method: RouteMethod,
     private path: string,
-    private middleware: (express.RequestHandler | Resolver<express.RequestHandler>)[],
+    private middleware: (RequestHandler | Resolver<RequestHandler>)[],
     private target: any,
     private propertyKey: string
   ) { super(); }
 
-  public setup(router: Router, container: Container) {
-    let handler = (req: express.Request, res: express.Response, next: express.NextFunction) => {
-      const result: any = (<any>router)[this.propertyKey](req, res, next);
-      if (result && result instanceof Promise) {
-        result.then((value: any) => {
-          if (value && !res.headersSent) {
-            res.send(value);
-          }
-        })
-        .catch((error: any) => {
-          next(error);
-        });
-      } else if (result && !res.headersSent) {
-        res.send(result);
-      }
-    };
-
-    const middleware: express.RequestHandler[] = this.middleware.map(m =>
-      m instanceof Resolver ? m.resolve(container) : m
-    );
-    router.useMethod(this.method, this.path, ...middleware, handler);
+  public routes(controller: any): Route[] {
+    return [{
+      method: this.method,
+      path: this.path,
+      handlers: this.middleware.concat(
+        (...args: any[]) => controller[this.propertyKey](...args)
+      )
+    }];
   }
 }

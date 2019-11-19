@@ -5,7 +5,6 @@ import * as bodyParser from 'body-parser';
 import * as SocketIO from 'socket.io';
 import {serializeError} from 'serialize-error';
 import {get, post, put, del} from '../decorators';
-import {Router} from '../router';
 
 export interface ResourceConfig {
   collection: string;
@@ -18,19 +17,17 @@ export interface ResourceConfig {
  *
  * This function creates a request handler that interacts with a Ziggurat database collection.
  */
-export function resource(config: ResourceConfig): Resolver<Router> {
+export function resource(config: ResourceConfig): Resolver<any> {
   return Injection.of((db: Database) => {
     return new Resource(db.collection(config.collection), config.readOnly);
   }, ['ziggurat.Database']);
 }
 
-export class Resource extends Router {
+export class Resource {
   public constructor(
     protected collection: Collection,
     protected readOnly = false
-  ) {
-    super();
-  }
+  ) {}
 
   public onConnection(socket: SocketIO.Socket) {
     this.collection.on('document-upserted', doc => {
