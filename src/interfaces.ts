@@ -1,14 +1,20 @@
 import {RequestHandler} from 'express';
-import {Resolver} from '@ziggurat/tiamat';
+import {Newable, Factory} from '@ziggurat/tiamat';
 import {AddressInfo} from 'net';
+
+export abstract class RequestHandlerFactory extends Factory<RequestHandler> {
+  public abstract create(): RequestHandler;
+}
+
+export abstract class ControllerFactory extends Factory<any> {
+  public abstract create(): any;
+}
 
 /**
  * Server middleware.
- *
- * If it is a string the middleware will be obtained from the container.
  */
 export type Middleware =
-  (RequestHandler | Resolver<RequestHandler>)[] | any | Resolver<any>;
+  (RequestHandler | RequestHandlerFactory)[] | Newable<any> | ControllerFactory;
 
 export type RouteMap = {[path: string]: Middleware};
 
@@ -32,5 +38,5 @@ export interface Server {
 
 export function makeRoutes(routeMap: RouteMap): Route[] {
   return Object.entries(routeMap).map(([path, handlers]) =>
-    ({path, handlers: [].concat(handlers)}));
+    ({path, handlers: handlers}));
 }

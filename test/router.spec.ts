@@ -1,4 +1,4 @@
-import {bootstrap, component, Lookup} from '@ziggurat/tiamat';
+import {bootstrap, component} from '@ziggurat/tiamat';
 import {Server} from '../src/interfaces';
 import {get, post} from '../src/decorators';
 import {ServerConfig} from '../src/interfaces';
@@ -34,8 +34,7 @@ describe('Router', () => {
     instances: {
       'tashmetu.ServerConfig': {
         middleware: {
-          '/route': Lookup.of(TestRouter),
-          '/route2': new TestRouter(),
+          '/route': TestRouter,
         }
       } as ServerConfig
     },
@@ -58,10 +57,6 @@ describe('Router', () => {
       .get('/route')
       .expect(200)
       .then(res => expect(res.body).to.eql({foo: 'bar'}));
-  });
-
-  it('should add router by instance', () => {
-    return request(app).get('/route2').expect(200);
   });
 
   it('should post to router and recieve reply', () => {

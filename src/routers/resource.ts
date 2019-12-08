@@ -1,10 +1,10 @@
-import {Injection, Resolver} from '@ziggurat/tiamat';
 import {Collection, Database} from '@ziggurat/ziggurat';
 import * as express from 'express';
 import * as bodyParser from 'body-parser';
 import * as SocketIO from 'socket.io';
 import {serializeError} from 'serialize-error';
 import {get, post, put, del} from '../decorators';
+import {ControllerFactory} from '../interfaces';
 
 export interface ResourceConfig {
   collection: string;
@@ -12,16 +12,26 @@ export interface ResourceConfig {
   readOnly?: boolean;
 }
 
+export class ResourceFactory extends ControllerFactory {
+  public static inject = ['ziggurat.Database'];
+
+  constructor(private config: ResourceConfig) {
+    super();
+  }
+
+  public create(): any {
+    return ResourceFactory.resolve((db: Database) => {
+      return new Resource(db.collection(this.config.collection), this.config.readOnly);
+    });
+  }
+}
+
 /**
  * Create a resource request handler.
  *
- * This function creates a request handler that interacts with a Ziggurat database collection.
+ * This function creates a controller that interacts with a Ziggurat database collection.
  */
-export function resource(config: ResourceConfig): Resolver<any> {
-  return Injection.of((db: Database) => {
-    return new Resource(db.collection(config.collection), config.readOnly);
-  }, ['ziggurat.Database']);
-}
+export const resource = (config: ResourceConfig) => new ResourceFactory(config);
 
 export class Resource {
   public constructor(

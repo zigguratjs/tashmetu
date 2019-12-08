@@ -1,13 +1,12 @@
 import {RequestHandler} from 'express';
-import {Resolver} from '@ziggurat/tiamat';
 import {RouterAnnotation} from './middleware';
-import {Route, RouteMethod} from '../interfaces';
+import {Route, RouteMethod, RequestHandlerFactory} from '../interfaces';
 
 export class RouterMethodAnnotation extends RouterAnnotation {
   public constructor(
     private method: RouteMethod,
     private path: string,
-    private middleware: (RequestHandler | Resolver<RequestHandler>)[],
+    private middleware: (RequestHandler | RequestHandlerFactory)[],
     private target: any,
     private propertyKey: string
   ) { super(); }

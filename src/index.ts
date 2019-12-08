@@ -4,13 +4,15 @@ import * as SocketIO from 'socket.io';
 import * as express from 'express';
 import {TashmetuServer} from './server';
 import {SocketGateway} from './gateway';
+import {ResourceFactory} from './routers/resource';
 
 export * from './decorators';
 export * from './interfaces';
 export * from './routers/resource';
 
 @component({
-  providers: [SocketGateway, TashmetuServer]
+  providers: [SocketGateway, TashmetuServer],
+  factories: [ResourceFactory],
 })
 export default class Tashmetu {
   @factory({

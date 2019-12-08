@@ -1,18 +1,17 @@
 import * as express from 'express';
 import * as http from 'http';
 import {AddressInfo} from 'net';
-import {provider, Container, Optional, Resolver} from '@ziggurat/tiamat';
+import {provider, Optional, resolveInstance} from '@ziggurat/tiamat';
 import {RouterAnnotation} from './decorators/middleware';
-import {Route, Server, makeRoutes} from './interfaces';
+import {Route, Server, makeRoutes, RequestHandlerFactory, ControllerFactory} from './interfaces';
 import {SocketGateway} from './gateway';
-import {ServerConfig} from './interfaces';
+import {Middleware, ServerConfig} from './interfaces';
 
 @provider({
   key: 'tashmetu.Server',
   inject: [
     'express.Application',
     'http.Server',
-    'tiamat.Container',
     'tashmetu.SocketGateway',
     Optional.of('tashmetu.ServerConfig'),
   ]
@@ -21,9 +20,8 @@ export class TashmetuServer implements Server {
   public constructor(
     private app: express.Application,
     private server: http.Server,
-    private container: Container,
     private gateway: SocketGateway,
-    config: ServerConfig | undefined,
+    config?: ServerConfig,
   ) {
     if (config) {
       this.mountRoutes(this.app, makeRoutes(config.middleware));
@@ -55,7 +53,8 @@ export class TashmetuServer implements Server {
 
   private mountRoutes(router: express.Router, routes: Route[]): express.Router {
     for (let route of routes) {
-      const handlers = route.handlers.map((h: any) => this.createHandler(h, route.path || '/'));
+      const handlers = this.createHandlers(route.handlers, route.path || '/')
+        .map(h => this.createAsyncHandler(h));
 
       if (route.method) {
         (<any>router)[route.method](route.path, handlers);
@@ -68,27 +67,31 @@ export class TashmetuServer implements Server {
     return router;
   }
 
-  private createHandler(handler: any, path: string): express.RequestHandler {
-    if (handler instanceof Resolver) {
-      return this.createHandler(handler.resolve(this.container), path);
+  private createAsyncHandler(handler: express.RequestHandler): express.RequestHandler  {
+    return (req: express.Request, res: express.Response, next: express.NextFunction) => {
+      const result: any = handler(req, res, next);
+      if (result && result instanceof Promise) {
+        result.then((value: any) => {
+          if (value && !res.headersSent) {
+            res.send(value);
+          }
+        })
+        .catch((error: any) => {
+          next(error);
+        });
+      } else if (result && !res.headersSent) {
+        res.send(result);
+      }
+    };
+  }
+
+  private createHandlers(middleware: Middleware, path: string): express.RequestHandler[] {
+    if (Array.isArray(middleware)) {
+      return middleware.map(m => m instanceof RequestHandlerFactory ? m.create() : m);
     }
-    if (typeof handler === 'function') {
-      return (req: express.Request, res: express.Response, next: express.NextFunction) => {
-        const result: any = handler(req, res, next);
-        if (result && result instanceof Promise) {
-          result.then((value: any) => {
-            if (value && !res.headersSent) {
-              res.send(value);
-            }
-          })
-          .catch((error: any) => {
-            next(error);
-          });
-        } else if (result && !res.headersSent) {
-          res.send(result);
-        }
-      };
+    if (middleware instanceof ControllerFactory) {
+      return [this.createRouter(middleware.create(), path)];
     }
-    return this.createRouter(handler, path);
+    return [this.createRouter(resolveInstance(middleware), path)];
   }
 }

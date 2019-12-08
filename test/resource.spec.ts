@@ -2,7 +2,6 @@ import {bootstrap, component} from '@ziggurat/tiamat';
 import {memory} from '@ziggurat/ziggurat';
 import Tashmetu, { resource } from '../src';
 import {Server} from '../src/interfaces';
-import * as express from 'express';
 import * as request from 'supertest-as-promised';
 import 'mocha';
 import {expect} from 'chai';
@@ -31,7 +30,7 @@ describe('Resource', () => {
     ) {}
   }
 
-  let app: any; // express.Application;
+  let app: Server;
 
   before(async () => {
     app = (await bootstrap(TestComponent)).server;
