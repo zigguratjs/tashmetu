@@ -1,5 +1,6 @@
 import {Annotation} from '@ziggurat/tiamat';
-import {Route, RouteMap, makeRoutes} from '../interfaces';
+import {Route, RouteMap} from '../interfaces';
+import {makeRoutes} from '../routing';
 
 export class RouterAnnotation extends Annotation {
   public routes(controller: any): Route[] {

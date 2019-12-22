@@ -1,4 +1,4 @@
-import {bootstrap, component} from '@ziggurat/tiamat';
+import {bootstrap, component, Provider} from '@ziggurat/tiamat';
 import {Server} from '../src/interfaces';
 import {get, post} from '../src/decorators';
 import {ServerConfig} from '../src/interfaces';
@@ -8,6 +8,7 @@ import * as bodyParser from 'body-parser';
 import * as request from 'supertest-as-promised';
 import 'mocha';
 import {expect} from 'chai';
+import {router} from '../src/routing';
 
 describe('Router', () => {
   class TestRouter {
@@ -29,15 +30,15 @@ describe('Router', () => {
   }
 
   @component({
-    providers: [TestRouter],
-    dependencies: [Tashmetu],
-    instances: {
-      'tashmetu.ServerConfig': {
+    providers: [
+      TestRouter,
+      Provider.ofInstance<ServerConfig>('tashmetu.ServerConfig', {
         middleware: {
-          '/route': TestRouter,
+          '/route': router(new TestRouter()),
         }
-      } as ServerConfig
-    },
+      })
+    ],
+    dependencies: [Tashmetu],
     inject: ['tashmetu.Server']
   })
   class TestComponent {

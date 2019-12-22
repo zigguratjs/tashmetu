@@ -1,40 +1,32 @@
-import {component, factory} from '@ziggurat/tiamat';
+import {component, Provider} from '@ziggurat/tiamat';
 import * as http from 'http';
 import * as SocketIO from 'socket.io';
 import * as express from 'express';
 import {TashmetuServer} from './server';
 import {SocketGateway} from './gateway';
 import {ResourceFactory} from './routers/resource';
+import {RouterFactory} from './routing';
 
 export * from './decorators';
 export * from './interfaces';
 export * from './routers/resource';
 
 @component({
-  providers: [SocketGateway, TashmetuServer],
-  factories: [ResourceFactory],
+  providers: [
+    SocketGateway,
+    TashmetuServer,
+    Provider.ofInstance('express.Application', express()),
+    Provider.ofFactory({
+      key: 'http.Server',
+      inject: ['express.Application'],
+      create: (app: express.Application) => http.createServer(app),
+    }),
+    Provider.ofFactory({
+      key: 'socket.io.Server',
+      inject: ['http.Server'],
+      create: (server: http.Server) => SocketIO(server),
+    })
+  ],
+  factories: [ResourceFactory, RouterFactory],
 })
-export default class Tashmetu {
-  @factory({
-    key: 'socket.io.Server',
-    inject: ['http.Server']
-  })
-  public socketIOServer(server: http.Server): SocketIO.Server {
-    return SocketIO(server);
-  }
-
-  @factory({
-    key: 'http.Server',
-    inject: ['express.Application']
-  })
-  public httpServer(app: express.Application): http.Server {
-    return http.createServer(app);
-  }
-
-  @factory({
-    key: 'express.Application'
-  })
-  public expressApp(): express.Application {
-    return express();
-  }
-}
+export default class Tashmetu {}

@@ -1,7 +1,6 @@
-import {bootstrap, component} from '@ziggurat/tiamat';
-import {memory} from '@ziggurat/ziggurat';
-import Tashmetu, { resource } from '../src';
-import {Server} from '../src/interfaces';
+import {bootstrap, component, Provider} from '@ziggurat/tiamat';
+import {memory, DatabaseConfig} from '@ziggurat/ziggurat';
+import Tashmetu, { resource, Server, ServerConfig } from '../src';
 import * as request from 'supertest-as-promised';
 import 'mocha';
 import {expect} from 'chai';
@@ -9,19 +8,19 @@ import {expect} from 'chai';
 describe('Resource', () => {
   @component({
     dependencies: [Tashmetu, import('@ziggurat/ziggurat')],
-    instances: {
-      'ziggurat.DatabaseConfig': {
+    providers: [
+      Provider.ofInstance<DatabaseConfig>('ziggurat.DatabaseConfig', {
         collections: {
           'test': memory([{_id: 'doc1'}, {_id: 'doc2'}])
         }
-      },
-      'tashmetu.ServerConfig': {
+      }),
+      Provider.ofInstance<ServerConfig>('tashmetu.ServerConfig', {
         middleware: {
           '/readonly': resource({collection: 'test', readOnly: true}),
           '/readwrite': resource({collection: 'test', readOnly: false}),
         }
-      }
-    },
+      }),
+    ],
     inject: ['tashmetu.Server']
   })
   class TestComponent {

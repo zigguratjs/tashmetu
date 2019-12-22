@@ -5,6 +5,7 @@ import * as SocketIO from 'socket.io';
 import {serializeError} from 'serialize-error';
 import {get, post, put, del} from '../decorators';
 import {ControllerFactory} from '../interfaces';
+import {router} from '../routing';
 
 export interface ResourceConfig {
   collection: string;
@@ -29,9 +30,9 @@ export class ResourceFactory extends ControllerFactory {
 /**
  * Create a resource request handler.
  *
- * This function creates a controller that interacts with a Ziggurat database collection.
+ * This function creates a router that interacts with a Ziggurat database collection.
  */
-export const resource = (config: ResourceConfig) => new ResourceFactory(config);
+export const resource = (config: ResourceConfig) => router(new ResourceFactory(config));
 
 export class Resource {
   public constructor(
