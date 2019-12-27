@@ -1,34 +1,5 @@
 import * as express from 'express';
-import {ControllerFactory, Middleware, RequestHandlerFactory, Route, RouteMap} from './interfaces';
-import {SocketGateway} from './gateway';
-import {RouterAnnotation} from './decorators/middleware';
-
-export class RouterFactory extends RequestHandlerFactory {
-  public static inject = ['tashmetu.SocketGateway'];
-
-  public constructor(private controller: any | ControllerFactory) {
-    super();
-  }
-
-  public create(path: string): express.Router {
-    const controller = this.controller instanceof ControllerFactory
-      ? this.controller.create()
-      : this.controller;
-
-    return RouterFactory.resolve((gateway: SocketGateway) => {
-      let routes: Route[] = [];
-
-      for (let annotation of RouterAnnotation.onClass(controller.constructor, true)) {
-        routes = routes.concat(annotation.routes(controller));
-      }
-      gateway.register(controller, {namespace: path});
-
-      return mountRoutes(express.Router(), ...routes);
-    });
-  }
-}
-
-export const router = (controller: any | ControllerFactory) => new RouterFactory(controller);
+import {Middleware, RequestHandlerFactory, Route, RouteMap} from './interfaces';
 
 export function makeRoutes(routeMap: RouteMap): Route[] {
   return Object.entries(routeMap).map(([path, handlers]) =>

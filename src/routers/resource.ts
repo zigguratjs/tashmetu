@@ -4,8 +4,7 @@ import * as bodyParser from 'body-parser';
 import * as SocketIO from 'socket.io';
 import {serializeError} from 'serialize-error';
 import {get, post, put, del} from '../decorators';
-import {ControllerFactory} from '../interfaces';
-import {router} from '../routing';
+import {router, ControllerFactory} from '../controller';
 
 export interface ResourceConfig {
   collection: string;
@@ -14,14 +13,12 @@ export interface ResourceConfig {
 }
 
 export class ResourceFactory extends ControllerFactory {
-  public static inject = ['ziggurat.Database'];
-
   constructor(private config: ResourceConfig) {
-    super();
+    super('ziggurat.Database');
   }
 
   public create(): any {
-    return ResourceFactory.resolve((db: Database) => {
+    return this.resolve((db: Database) => {
       return new Resource(db.collection(this.config.collection), this.config.readOnly);
     });
   }

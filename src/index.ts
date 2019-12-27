@@ -5,8 +5,9 @@ import * as express from 'express';
 import {TashmetuServer} from './server';
 import {SocketGateway} from './gateway';
 import {ResourceFactory} from './routers/resource';
-import {RouterFactory} from './routing';
+import {RouterFactory, ProviderControllerFactory} from './controller';
 
+export * from './controller';
 export * from './decorators';
 export * from './interfaces';
 export * from './routers/resource';
@@ -27,6 +28,6 @@ export * from './routers/resource';
       create: (server: http.Server) => SocketIO(server),
     })
   ],
-  factories: [ResourceFactory, RouterFactory],
+  factories: [ResourceFactory, RouterFactory, ProviderControllerFactory],
 })
 export default class Tashmetu {}

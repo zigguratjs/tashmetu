@@ -8,7 +8,7 @@ import * as bodyParser from 'body-parser';
 import * as request from 'supertest-as-promised';
 import 'mocha';
 import {expect} from 'chai';
-import {router} from '../src/routing';
+import {router} from '../src/controller';
 
 describe('Router', () => {
   class TestRouter {
@@ -34,7 +34,7 @@ describe('Router', () => {
       TestRouter,
       Provider.ofInstance<ServerConfig>('tashmetu.ServerConfig', {
         middleware: {
-          '/route': router(new TestRouter()),
+          '/route': router(TestRouter),
         }
       })
     ],

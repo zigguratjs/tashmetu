@@ -6,10 +6,6 @@ export abstract class RequestHandlerFactory extends Factory<RequestHandler> {
   public abstract create(path: string): RequestHandler;
 }
 
-export abstract class ControllerFactory extends Factory<any> {
-  public abstract create(): any;
-}
-
 /**
  * Server middleware.
  */
@@ -31,6 +27,11 @@ export interface ServerConfig {
 }
 
 export interface Server {
+  /**
+   * Starts the server and listens for connections.
+   *
+   * @param port Port to listen on.
+   */
   listen(port: number): any;
 
   address(): string | AddressInfo | null;
