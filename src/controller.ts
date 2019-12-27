@@ -1,5 +1,5 @@
 import * as express from 'express';
-import {Factory, Newable} from '@ziggurat/tiamat';
+import {Factory, ServiceRequest} from '@ziggurat/tiamat';
 import {RequestHandlerFactory, Route} from './interfaces';
 import {SocketGateway} from './gateway';
 import {RouterAnnotation} from './decorators/middleware';
@@ -9,9 +9,12 @@ export abstract class ControllerFactory extends Factory<any> {
   public abstract create(): any;
 }
 
+/**
+ * A factory that creates a controller given a service request.
+ */
 export class ProviderControllerFactory extends ControllerFactory {
-  constructor(ctr: Newable<any>) {
-    super(ctr);
+  constructor(provider: ServiceRequest<any>) {
+    super(provider);
   }
 
   public create(): any {
@@ -19,13 +22,16 @@ export class ProviderControllerFactory extends ControllerFactory {
   }
 }
 
+/**
+ * A factory that creates a request handler from a controller given its factory.
+ */
 export class RouterFactory extends RequestHandlerFactory {
-  public constructor(private fact: ControllerFactory) {
+  public constructor(private controllerFactory: ControllerFactory) {
     super('tashmetu.SocketGateway');
   }
 
   public create(path: string): express.RequestHandler {
-    const controller = this.fact.create();
+    const controller = this.controllerFactory.create();
 
     return this.resolve((gateway: SocketGateway) => {
       let routes: Route[] = [];
@@ -40,7 +46,14 @@ export class RouterFactory extends RequestHandlerFactory {
   }
 }
 
-export const router = (controller: Newable<any> | ControllerFactory) => {
+/**
+ * Create a request handler factory from a controller provider or controller factory.
+ *
+ * This function allows us to turn a controller into a mountable request handler.
+ *
+ * @param controller A provider of or factory of a controller.
+ */
+export const router = (controller: ServiceRequest<any> | ControllerFactory) => {
   return new RouterFactory(
     controller instanceof ControllerFactory
       ? controller
