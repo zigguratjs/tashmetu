@@ -7,7 +7,6 @@ export class RouterMethodAnnotation extends RouterAnnotation {
     private method: RouteMethod,
     private path: string,
     private middleware: (RequestHandler | RequestHandlerFactory)[],
-    private target: any,
     private propertyKey: string
   ) { super(); }
 

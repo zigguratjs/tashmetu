@@ -1,6 +1,6 @@
-import {RequestHandler} from 'express';
-import {classDecorator, propertyDecorator} from '@ziggurat/tiamat';
-import {RouteMap, RequestHandlerFactory} from '../interfaces';
+import {RequestHandler, Request, Response, NextFunction} from 'express';
+import {classDecorator, methodDecorator} from '@ziggurat/tiamat';
+import {RouteMap, RouteMethod, RequestHandlerFactory} from '../interfaces';
 import {RouterMethodAnnotation} from './method';
 import {MiddlewareAnnotation} from './middleware';
 
@@ -21,11 +21,12 @@ import {MiddlewareAnnotation} from './middleware';
  * })
  * ```
  */
-export const middleware = <(config: RouteMap) => any>
-  classDecorator(MiddlewareAnnotation, {});
+export const middleware = (config: RouteMap) =>
+  classDecorator(() => new MiddlewareAnnotation(config));
 
-const method = <(name: string, path: string, mw: (RequestHandler | RequestHandlerFactory)[]) => any>
-  propertyDecorator(RouterMethodAnnotation);
+const method = (name: RouteMethod, path: string, mw: (RequestHandler | RequestHandlerFactory)[]) =>
+  methodDecorator<RequestHandler>((target, propertyKey) =>
+    new RouterMethodAnnotation(name, path, mw, propertyKey));
 
 /** HTTP GET request handler. */
 export const get = (path: string, ...mw: (RequestHandler | RequestHandlerFactory)[]) =>

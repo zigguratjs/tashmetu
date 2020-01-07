@@ -19,12 +19,12 @@ describe('Router', () => {
     }
 
     @get('/')
-    private async route(req: express.Request, res: express.Response): Promise<any> {
+    public async route(req: express.Request, res: express.Response): Promise<any> {
       return {foo: this.foo};
     }
 
     @post('/post', bodyParser.json())
-    private async postRoute(req: express.Request, res: express.Response): Promise<any> {
+    public async postRoute(req: express.Request, res: express.Response): Promise<any> {
       return req.body;
     }
   }
