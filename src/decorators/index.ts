@@ -1,4 +1,4 @@
-import {RequestHandler, Request, Response, NextFunction} from 'express';
+import {RequestHandler} from 'express';
 import {classDecorator, methodDecorator} from '@ziggurat/tiamat';
 import {RouteMap, RouteMethod, RequestHandlerFactory} from '../interfaces';
 import {RouterMethodAnnotation} from './method';
