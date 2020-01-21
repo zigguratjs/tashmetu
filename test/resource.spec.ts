@@ -1,5 +1,4 @@
-import {bootstrap, component, Provider} from '@ziggurat/tiamat';
-import {memory, DatabaseConfig} from '@ziggurat/ziggurat';
+import {bootstrap, component, memory, DatabaseConfig, Provider} from '@ziqquratu/ziqquratu';
 import Tashmetu, { resource, Server, ServerConfig } from '../src';
 import * as request from 'supertest-as-promised';
 import 'mocha';
@@ -7,9 +6,9 @@ import {expect} from 'chai';
 
 describe('Resource', () => {
   @component({
-    dependencies: [Tashmetu, import('@ziggurat/ziggurat')],
+    dependencies: [Tashmetu],
     providers: [
-      Provider.ofInstance<DatabaseConfig>('ziggurat.DatabaseConfig', {
+      Provider.ofInstance<DatabaseConfig>('ziqquratu.DatabaseConfig', {
         collections: {
           'test': memory([{_id: 'doc1'}, {_id: 'doc2'}])
         }

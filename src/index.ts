@@ -1,4 +1,4 @@
-import {component, Provider} from '@ziggurat/tiamat';
+import {component, Provider} from '@ziqquratu/ziqquratu';
 import * as http from 'http';
 import * as SocketIO from 'socket.io';
 import * as express from 'express';

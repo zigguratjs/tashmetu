@@ -1,4 +1,4 @@
-import {Annotation} from '@ziggurat/tiamat';
+import {Annotation} from '@ziqquratu/ziqquratu';
 import {Route, RouteMap} from '../interfaces';
 import {makeRoutes} from '../routing';
 

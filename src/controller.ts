@@ -1,5 +1,5 @@
 import * as express from 'express';
-import {Factory, ServiceRequest} from '@ziggurat/tiamat';
+import {Factory, ServiceRequest} from '@ziqquratu/ziqquratu';
 import {RequestHandlerFactory, Route} from './interfaces';
 import {SocketGateway} from './gateway';
 import {RouterAnnotation} from './decorators/middleware';

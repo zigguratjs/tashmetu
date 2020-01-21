@@ -1,4 +1,4 @@
-import {Factory} from '@ziggurat/tiamat';
+import {Factory} from '@ziqquratu/ziqquratu';
 import {RequestHandler} from 'express';
 import {AddressInfo} from 'net';
 

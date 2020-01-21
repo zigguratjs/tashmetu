@@ -1,4 +1,4 @@
-import {Collection, Database} from '@ziggurat/ziggurat';
+import {Collection, Database} from '@ziqquratu/ziqquratu';
 import * as express from 'express';
 import * as bodyParser from 'body-parser';
 import * as SocketIO from 'socket.io';
@@ -14,7 +14,7 @@ export interface ResourceConfig {
 
 export class ResourceFactory extends ControllerFactory {
   constructor(private config: ResourceConfig) {
-    super('ziggurat.Database');
+    super('ziqquratu.Database');
   }
 
   public create(): any {

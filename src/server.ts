@@ -1,7 +1,7 @@
 import * as express from 'express';
 import * as http from 'http';
 import {AddressInfo} from 'net';
-import {provider, Optional} from '@ziggurat/tiamat';
+import {provider, Optional} from '@ziqquratu/ziqquratu';
 import {Route, Server, ServerConfig} from './interfaces';
 import {makeRoutes, mountRoutes} from './routing';
 

@@ -1,4 +1,4 @@
-import {bootstrap, component, Provider} from '@ziggurat/tiamat';
+import {bootstrap, component, Provider} from '@ziqquratu/ziqquratu';
 import {Server} from '../src/interfaces';
 import {get, post} from '../src/decorators';
 import {ServerConfig} from '../src/interfaces';

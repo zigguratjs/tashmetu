@@ -1,4 +1,4 @@
-import {provider} from '@ziggurat/tiamat';
+import {provider} from '@ziqquratu/ziqquratu';
 import * as SocketIO from 'socket.io';
 
 export interface GatewayConfig {

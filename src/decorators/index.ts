@@ -1,5 +1,5 @@
 import {RequestHandler} from 'express';
-import {classDecorator, methodDecorator} from '@ziggurat/tiamat';
+import {classDecorator, methodDecorator} from '@ziqquratu/ziqquratu';
 import {RouteMap, RouteMethod, RequestHandlerFactory} from '../interfaces';
 import {RouterMethodAnnotation} from './method';
 import {MiddlewareAnnotation} from './middleware';
