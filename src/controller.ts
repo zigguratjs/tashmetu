@@ -1,5 +1,5 @@
 import * as express from 'express';
-import {Factory, ServiceRequest} from '@ziqquratu/ziqquratu';
+import {Factory, Logger, ServiceRequest} from '@ziqquratu/ziqquratu';
 import {RequestHandlerFactory, Route} from './interfaces';
 import {SocketGateway} from './gateway';
 import {RouterAnnotation} from './decorators/middleware';
@@ -27,17 +27,21 @@ export class ProviderControllerFactory extends ControllerFactory {
  */
 export class RouterFactory extends RequestHandlerFactory {
   public constructor(private controllerFactory: ControllerFactory) {
-    super('tashmetu.SocketGateway');
+    super('tashmetu.SocketGateway', 'tashmetu.Logger');
   }
 
   public create(path: string): express.RequestHandler {
     const controller = this.controllerFactory.create();
 
-    return this.resolve((gateway: SocketGateway) => {
+    return this.resolve((gateway: SocketGateway, logger: Logger) => {
+      logger.info(`Creating router from controller at '${path}'`);
       let routes: Route[] = [];
 
       for (let annotation of RouterAnnotation.onClass(controller.constructor, true)) {
         routes = routes.concat(annotation.routes(controller));
+      }
+      for (let route of routes) {
+        logger.info(`  Route '${route.method} ${route.path}'`);
       }
       gateway.register(controller, {namespace: path});
 

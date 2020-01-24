@@ -1,4 +1,4 @@
-import {component, Provider} from '@ziqquratu/ziqquratu';
+import {component, Logger, Provider} from '@ziqquratu/ziqquratu';
 import * as http from 'http';
 import * as SocketIO from 'socket.io';
 import * as express from 'express';
@@ -26,6 +26,11 @@ export * from './routers/resource';
       key: 'socket.io.Server',
       inject: ['http.Server'],
       create: (server: http.Server) => SocketIO(server),
+    }),
+    Provider.ofFactory({
+      key: 'tashmetu.Logger',
+      inject: ['ziqquratu.Logger'],
+      create: (logger: Logger) => logger.inScope('tashmetu')
     })
   ],
   factories: [ResourceFactory, RouterFactory, ProviderControllerFactory],

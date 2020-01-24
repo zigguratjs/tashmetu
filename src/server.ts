@@ -1,7 +1,7 @@
 import * as express from 'express';
 import * as http from 'http';
 import {AddressInfo} from 'net';
-import {provider, Optional} from '@ziqquratu/ziqquratu';
+import {provider, Logger, Optional} from '@ziqquratu/ziqquratu';
 import {Route, Server, ServerConfig} from './interfaces';
 import {makeRoutes, mountRoutes} from './routing';
 
@@ -10,6 +10,7 @@ import {makeRoutes, mountRoutes} from './routing';
   inject: [
     'express.Application',
     'http.Server',
+    'tashmetu.Logger',
     Optional.of('tashmetu.ServerConfig'),
   ]
 })
@@ -17,6 +18,7 @@ export class TashmetuServer implements Server {
   public constructor(
     private app: express.Application,
     private server: http.Server,
+    private logger: Logger,
     config?: ServerConfig,
   ) {
     if (config) {
@@ -29,6 +31,7 @@ export class TashmetuServer implements Server {
   }
 
   public listen(port: number): http.Server {
+    this.logger.info(`Listening on port ${port}`);
     return this.server.listen(port);
   }
 
