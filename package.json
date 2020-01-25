@@ -4,6 +4,7 @@
   "description": "Tashmetu is a server built on express",
   "scripts": {
     "commit": "git-cz",
+    "lint": "eslint --cache --ext .js,.ts src/",
     "test": "mocha --opts mocha.opts"
   },
   "main": "dist/index.js",
@@ -23,11 +24,14 @@
     "@types/node": "12.7.0",
     "@types/socket.io": "^2.1.0",
     "@types/supertest-as-promised": "^2.0.35",
+    "@typescript-eslint/eslint-plugin": "^2.17.0",
+    "@typescript-eslint/parser": "^2.17.0",
     "@ziqquratu/ziqquratu": "^1.0.0-alpha.0",
     "body-parser": "^1.18.2",
     "chai": "^4.1.2",
     "commitizen": "^4.0.3",
     "cz-conventional-changelog": "^3.0.2",
+    "eslint": "^6.8.0",
     "gulp": "^3.9.1",
     "gulp-tslint": "^8.1.1",
     "gulp-typescript": "^3.1.4",

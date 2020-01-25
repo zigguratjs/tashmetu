@@ -2,4 +2,5 @@ dist
 dts
 node_modules
 *.swp
+.eslintcache
 .vscode
