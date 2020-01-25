@@ -3,6 +3,7 @@
   "version": "0.22.4",
   "description": "Tashmetu is a server built on express",
   "scripts": {
+    "commit": "git-cz",
     "test": "mocha --opts mocha.opts"
   },
   "main": "dist/index.js",
@@ -25,6 +26,8 @@
     "@ziqquratu/ziqquratu": "^1.0.0-alpha.0",
     "body-parser": "^1.18.2",
     "chai": "^4.1.2",
+    "commitizen": "^4.0.3",
+    "cz-conventional-changelog": "^3.0.2",
     "gulp": "^3.9.1",
     "gulp-tslint": "^8.1.1",
     "gulp-typescript": "^3.1.4",
@@ -39,5 +42,10 @@
   },
   "peerDependencies": {
     "@ziqquratu/ziqquratu": "^1.0.0-alpha.0"
+  },
+  "config": {
+    "commitizen": {
+      "path": "./node_modules/cz-conventional-changelog"
+    }
   }
 }
