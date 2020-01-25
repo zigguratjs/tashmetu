@@ -1,6 +1,6 @@
 import {bootstrap, component, memory, DatabaseConfig, Provider} from '@ziqquratu/ziqquratu';
 import Tashmetu, { resource, Server, ServerConfig } from '../src';
-import * as request from 'supertest-as-promised';
+import request from 'supertest-as-promised';
 import 'mocha';
 import {expect} from 'chai';
 
