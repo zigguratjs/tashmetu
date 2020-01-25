@@ -3,6 +3,8 @@
   "version": "0.22.4",
   "description": "Tashmetu is a server built on express",
   "scripts": {
+    "build": "tsc",
+    "clean": "rimraf dist",
     "commit": "git-cz",
     "lint": "eslint --cache --ext .js,.ts src/",
     "test": "mocha --opts mocha.opts"

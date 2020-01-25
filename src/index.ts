@@ -1,7 +1,7 @@
 import {component, Logger, Provider} from '@ziqquratu/ziqquratu';
-import * as http from 'http';
-import * as SocketIO from 'socket.io';
-import * as express from 'express';
+import http from 'http';
+import SocketIO from 'socket.io';
+import express from 'express';
 import {TashmetuServer} from './server';
 import {SocketGateway} from './gateway';
 import {ResourceFactory} from './routers/resource';
