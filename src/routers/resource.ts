@@ -49,6 +49,10 @@ export class Resource {
     });
   }
 
+  public toString(): string {
+    return `Resource {collection: '${this.collection.name}', readOnly: '${false}'}`;
+  }
+
   @get('/')
   public async getAll(req: express.Request, res: express.Response) {
     return this.formResponse(res, 200, false, async () => {

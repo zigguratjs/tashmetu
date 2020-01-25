@@ -15,12 +15,15 @@ import {makeRoutes, mountRoutes} from './routing';
   ]
 })
 export class TashmetuServer implements Server {
+  private logger: Logger;
+
   public constructor(
     private app: express.Application,
     private server: http.Server,
-    private logger: Logger,
+    logger: Logger,
     config?: ServerConfig,
   ) {
+    this.logger = logger.inScope('Server');
     if (config) {
       mountRoutes(this.app, ...makeRoutes(config.middleware));
     }

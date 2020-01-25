@@ -5,6 +5,10 @@ import {SocketGateway} from './gateway';
 import {RouterAnnotation} from './decorators/middleware';
 import {mountRoutes} from './routing';
 
+export function controllerName(ctr: any): string {
+  return typeof ctr.toString === 'function' ? ctr.toString() : ctr.constructor.name;
+}
+
 export abstract class ControllerFactory extends Factory<any> {
   public abstract create(): any;
 }
@@ -34,14 +38,15 @@ export class RouterFactory extends RequestHandlerFactory {
     const controller = this.controllerFactory.create();
 
     return this.resolve((gateway: SocketGateway, logger: Logger) => {
-      logger.info(`Creating router from controller at '${path}'`);
+      logger = logger.inScope('RouterFactory');
+      logger.info(`'${path}' as ${controllerName(controller)}`);
       let routes: Route[] = [];
 
       for (let annotation of RouterAnnotation.onClass(controller.constructor, true)) {
         routes = routes.concat(annotation.routes(controller));
       }
       for (let route of routes) {
-        logger.info(`  Route '${route.method} ${route.path}'`);
+        logger.info(`  - ${route.method}\t'${route.path}'`);
       }
       gateway.register(controller, {namespace: path});
 
