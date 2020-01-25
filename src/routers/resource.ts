@@ -37,7 +37,7 @@ export class Resource {
   }
 
   public toString(): string {
-    return `Resource {collection: '${this.collection.name}', readOnly: '${false}'}`;
+    return `Resource {collection: '${this.collection.name}', readOnly: '${this.readOnly}'}`;
   }
 
   @get('/')
