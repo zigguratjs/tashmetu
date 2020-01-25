@@ -1,4 +1,4 @@
-import {Collection, Database} from '@ziqquratu/ziqquratu';
+import {Collection, Database, Logger} from '@ziqquratu/ziqquratu';
 import * as express from 'express';
 import * as bodyParser from 'body-parser';
 import * as SocketIO from 'socket.io';
@@ -14,12 +14,16 @@ export interface ResourceConfig {
 
 export class ResourceFactory extends ControllerFactory {
   constructor(private config: ResourceConfig) {
-    super('ziqquratu.Database');
+    super('ziqquratu.Database', 'tashmetu.Logger');
   }
 
   public create(): any {
-    return this.resolve((db: Database) => {
-      return new Resource(db.collection(this.config.collection), this.config.readOnly);
+    return this.resolve((db: Database, logger: Logger) => {
+      return new Resource(
+        db.collection(this.config.collection),
+        logger.inScope('Resource'),
+        this.config.readOnly
+      );
     });
   }
 }
@@ -34,18 +38,24 @@ export const resource = (config: ResourceConfig) => router(new ResourceFactory(c
 export class Resource {
   public constructor(
     protected collection: Collection,
+    protected logger: Logger,
     protected readOnly = false
   ) {}
 
   public onConnection(socket: SocketIO.Socket) {
+    const logger = this.logger.inScope('socket');
+
     this.collection.on('document-upserted', doc => {
       socket.emit('document-upserted', doc, this.collection.name);
+      logger.info(`'${socket.nsp.name}' emit {event: 'document-upserted', id: '${doc._id}'}`);
     });
     this.collection.on('document-removed', doc => {
       socket.emit('document-removed', doc, this.collection.name);
+      logger.info(`'${socket.nsp.name}' emit {event: 'document-removed', id: '${doc._id}'}`);
     });
     this.collection.on('document-error', err => {
       socket.emit('document-error', err, this.collection.name);
+      logger.info(`'${socket.nsp.name}' emit {event: 'document-error', message: '${err.message}'}`);
     });
   }
 
