@@ -6,22 +6,6 @@ export function makeRoutes(routeMap: RouteMap): Route[] {
     ({path, handlers: handlers}));
 }
 
-export function mountRoutes(r: express.Router, ...routes: Route[]): express.Router {
-  for (let route of routes) {
-    const handlers = createHandlers(route.handlers, route.path || '/')
-      .map(h => createAsyncHandler(h));
-
-    if (route.method) {
-      (<any>r)[route.method](route.path, handlers);
-    } else if (route.path) {
-      r.use(route.path, handlers);
-    } else {
-      r.use(handlers);
-    }
-  }
-  return r;
-}
-
 function createAsyncHandler(handler: express.RequestHandler): express.RequestHandler  {
   return (req: express.Request, res: express.Response, next: express.NextFunction) => {
     const result: any = handler(req, res, next);
@@ -45,4 +29,20 @@ function createHandlers(middleware: Middleware, path: string): express.RequestHa
     return middleware.map(m => m instanceof RequestHandlerFactory ? m.create(path) : m);
   }
   return [middleware instanceof RequestHandlerFactory ? middleware.create(path) : middleware];
+}
+
+export function mountRoutes(r: express.Router, ...routes: Route[]): express.Router {
+  for (const route of routes) {
+    const handlers = createHandlers(route.handlers, route.path || '/')
+      .map(h => createAsyncHandler(h));
+
+    if (route.method) {
+      (r as any)[route.method](route.path, handlers);
+    } else if (route.path) {
+      r.use(route.path, handlers);
+    } else {
+      r.use(handlers);
+    }
+  }
+  return r;
 }

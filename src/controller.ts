@@ -42,10 +42,10 @@ export class RouterFactory extends RequestHandlerFactory {
       logger.info(`'${path}' as ${controllerName(controller)}`);
       let routes: Route[] = [];
 
-      for (let annotation of RouterAnnotation.onClass(controller.constructor, true)) {
+      for (const annotation of RouterAnnotation.onClass(controller.constructor, true)) {
         routes = routes.concat(annotation.routes(controller));
       }
-      for (let route of routes) {
+      for (const route of routes) {
         logger.info(`  - ${route.method}\t'${route.path}'`);
       }
       gateway.register(controller, {namespace: path});

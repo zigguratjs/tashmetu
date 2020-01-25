@@ -12,29 +12,6 @@ export interface ResourceConfig {
   readOnly?: boolean;
 }
 
-export class ResourceFactory extends ControllerFactory {
-  constructor(private config: ResourceConfig) {
-    super('ziqquratu.Database', 'tashmetu.Logger');
-  }
-
-  public create(): any {
-    return this.resolve((db: Database, logger: Logger) => {
-      return new Resource(
-        db.collection(this.config.collection),
-        logger.inScope('Resource'),
-        this.config.readOnly
-      );
-    });
-  }
-}
-
-/**
- * Create a resource request handler.
- *
- * This function creates a router that interacts with a Ziggurat database collection.
- */
-export const resource = (config: ResourceConfig) => router(new ResourceFactory(config));
-
 export class Resource {
   public constructor(
     protected collection: Collection,
@@ -66,9 +43,9 @@ export class Resource {
   @get('/')
   public async getAll(req: express.Request, res: express.Response) {
     return this.formResponse(res, 200, false, async () => {
-      let selector = this.parseJson(req.query.selector);
-      let options = this.parseJson(req.query.options);
-      let count = await this.collection.count(selector);
+      const selector = this.parseJson(req.query.selector);
+      const options = this.parseJson(req.query.options);
+      const count = await this.collection.count(selector);
 
       res.setHeader('X-total-count', count.toString());
 
@@ -133,7 +110,7 @@ export class Resource {
     }
   }
 
-  private parseJson(input: any): Object {
+  private parseJson(input: any): Record<string, any> {
     try {
       return JSON.parse(input);
     } catch (e) {
@@ -141,3 +118,26 @@ export class Resource {
     }
   }
 }
+
+export class ResourceFactory extends ControllerFactory {
+  constructor(private config: ResourceConfig) {
+    super('ziqquratu.Database', 'tashmetu.Logger');
+  }
+
+  public create(): any {
+    return this.resolve((db: Database, logger: Logger) => {
+      return new Resource(
+        db.collection(this.config.collection),
+        logger.inScope('Resource'),
+        this.config.readOnly
+      );
+    });
+  }
+}
+
+/**
+ * Create a resource request handler.
+ *
+ * This function creates a router that interacts with a Ziggurat database collection.
+ */
+export const resource = (config: ResourceConfig) => router(new ResourceFactory(config));
