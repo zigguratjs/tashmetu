@@ -13,6 +13,13 @@
   "types": "dist/index.d.ts",
   "author": "Björn Andersson",
   "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/ziqquratu/tashmetu"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
   "dependencies": {
     "express": "^4.17.0",
     "on-headers": "^1.0.2",
