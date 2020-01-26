@@ -1,6 +1,6 @@
 {
   "name": "@ziqquratu/tashmetu",
-  "version": "0.22.5",
+  "version": "0.22.6",
   "description": "Tashmetu is a server built on express",
   "scripts": {
     "build": "tsc",
@@ -10,7 +10,7 @@
     "test": "mocha --exit -r ts-node/register 'test/**/*.ts'"
   },
   "main": "dist/index.js",
-  "types": "dts/index.d.ts",
+  "types": "dist/index.d.ts",
   "author": "Björn Andersson",
   "license": "MIT",
   "dependencies": {
