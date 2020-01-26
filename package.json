@@ -1,6 +1,6 @@
 {
   "name": "@ziqquratu/tashmetu",
-  "version": "0.22.6",
+  "version": "0.22.7",
   "description": "Tashmetu is a server built on express",
   "scripts": {
     "build": "tsc",
@@ -15,6 +15,7 @@
   "license": "MIT",
   "dependencies": {
     "express": "^4.17.0",
+    "on-headers": "^1.0.2",
     "serialize-error": "^5.0.0",
     "socket.io": "^2.3.0"
   },
@@ -24,6 +25,7 @@
     "@types/express": "^4.17.0",
     "@types/mocha": "^5.2.7",
     "@types/node": "13.5.0",
+    "@types/on-headers": "^1.0.0",
     "@types/socket.io": "^2.1.0",
     "@types/supertest-as-promised": "^2.0.35",
     "@typescript-eslint/eslint-plugin": "^2.17.0",

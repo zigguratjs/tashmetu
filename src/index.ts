@@ -6,11 +6,13 @@ import {TashmetuServer} from './server';
 import {SocketGateway} from './gateway';
 import {ResourceFactory} from './routers/resource';
 import {RouterFactory, ProviderControllerFactory} from './controller';
+import {RequestLoggerFactory} from './logging';
 
 export * from './controller';
 export * from './decorators';
 export * from './interfaces';
 export * from './routers/resource';
+export * from './logging';
 
 @component({
   providers: [
@@ -33,6 +35,11 @@ export * from './routers/resource';
       create: (logger: Logger) => logger.inScope('tashmetu')
     })
   ],
-  factories: [ResourceFactory, RouterFactory, ProviderControllerFactory],
+  factories: [
+    ResourceFactory,
+    RouterFactory,
+    ProviderControllerFactory,
+    RequestLoggerFactory,
+  ],
 })
 export default class Tashmetu {}
