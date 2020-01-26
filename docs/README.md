@@ -2,12 +2,12 @@
 
 ## Description <a id="description"></a>
 
-Tashmetu is an HTTP server for publishing Ziggurat content. It allows us to define RESTful resources that interact with our collections. 
+Tashmetu is an HTTP server for publishing Ziqquratu content. It allows us to define RESTful resources that interact with the database.
 
 ## Installation <a id="installation"></a>
 
 ```text
-$ npm install @ziggurat/tashmetu
+$ npm install @ziqquratu/tashmetu
 ```
 
 ## Usage <a id="usage"></a>
@@ -17,7 +17,7 @@ The package exports a component that should be imported as a dependency in your 
 ```typescript
 @component({
   dependencies: [
-    import('@ziggurat/tashmetu')
+    import('@ziqquratu/tashmetu')
   ],
   providers: [
     Provider.ofInstance<ServerConfig>('tashmetu.ServerConfig', {
