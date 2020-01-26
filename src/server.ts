@@ -34,7 +34,7 @@ export class TashmetuServer implements Server {
   }
 
   public listen(port: number): http.Server {
-    this.logger.info(`Listening on port ${port}`);
+    this.logger.info(`listening on port ${port}`);
     return this.server.listen(port);
   }
 

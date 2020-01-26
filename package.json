@@ -1,6 +1,6 @@
 {
   "name": "@ziqquratu/tashmetu",
-  "version": "0.22.4",
+  "version": "0.22.5",
   "description": "Tashmetu is a server built on express",
   "scripts": {
     "build": "tsc",

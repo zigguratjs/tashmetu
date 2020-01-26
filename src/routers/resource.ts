@@ -24,20 +24,21 @@ export class Resource {
 
     this.collection.on('document-upserted', doc => {
       socket.emit('document-upserted', doc, this.collection.name);
-      logger.info(`'${socket.nsp.name}' emit {event: 'document-upserted', id: '${doc._id}'}`);
+      logger.info(`'${socket.nsp.name}' emitted 'document-upserted' for id '${doc._id}'`);
     });
     this.collection.on('document-removed', doc => {
       socket.emit('document-removed', doc, this.collection.name);
-      logger.info(`'${socket.nsp.name}' emit {event: 'document-removed', id: '${doc._id}'}`);
+      logger.info(`'${socket.nsp.name}' emitted 'document-removed' for id '${doc._id}'`);
     });
     this.collection.on('document-error', err => {
       socket.emit('document-error', err, this.collection.name);
-      logger.info(`'${socket.nsp.name}' emit {event: 'document-error', message: '${err.message}'}`);
+      logger.info(`'${socket.nsp.name}' emitted 'document-error' with message '${err.message}'`);
     });
   }
 
   public toString(): string {
-    return `Resource {collection: '${this.collection.name}', readOnly: '${this.readOnly}'}`;
+    const access = this.readOnly ? 'read only' : 'read/write';
+    return `resource using collection '${this.collection.name}' (${access})`;
   }
 
   @get('/')
