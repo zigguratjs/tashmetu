@@ -1,4 +1,4 @@
-import {Collection, Database, Logger} from '@ziqquratu/ziqquratu';
+import {Collection, Database, Logger, QueryOptions} from '@ziqquratu/ziqquratu';
 import * as express from 'express';
 import * as bodyParser from 'body-parser';
 import * as SocketIO from 'socket.io';
@@ -45,51 +45,60 @@ export class Resource {
   public async getAll(req: express.Request, res: express.Response) {
     return this.formResponse(res, 200, false, async () => {
       const selector = this.parseJson(req.query.selector);
-      const options = this.parseJson(req.query.options);
-      const count = await this.collection.count(selector);
+      const options: QueryOptions = this.parseJson(req.query.options);
+      const count = await this.collection.find(selector).count(false);
 
       res.setHeader('X-total-count', count.toString());
 
-      return this.collection.find(selector, options);
+      const cursor = this.collection.find(selector);
+      if (options.offset) {
+        cursor.skip(options.offset);
+      }
+      if (options.limit) {
+        cursor.limit(options.limit);
+      }
+      for (const [key, direction] of options.sort || []) {
+        cursor.sort(key, direction);
+      }
+      return cursor.toArray();
     });
   }
 
   @get('/:id')
   public async getOne(req: express.Request, res: express.Response) {
     return this.formResponse(res, 200, false, async () => {
-      try {
-        return await this.collection.findOne({_id: req.params.id});
-      } catch (err) {
+      const doc = await this.collection.findOne({_id: req.params.id});
+      if (!doc) {
         res.statusCode = 404;
-        return serializeError(err);
+        res.send(null);
       }
+      return doc;
     });
   }
 
   @post('/', bodyParser.json())
   public async postOne(req: express.Request, res: express.Response) {
     return this.formResponse(res, 201, true, async () => {
-      return this.collection.upsert(req.body);
+      return this.collection.insertOne(req.body);
     });
   }
 
   @put('/:id', bodyParser.json())
   public async putOne(req: express.Request, res: express.Response) {
     return this.formResponse(res, 200, true, async () => {
-      await this.collection.findOne({_id: req.params.id});
-      return this.collection.upsert(req.body);
+      return this.collection.replaceOne({_id: req.params.id}, req.body);
     });
   }
 
   @del('/:id', bodyParser.json())
   public async deleteOne(req: express.Request, res: express.Response) {
     return this.formResponse(res, 200, true, async () => {
-      const docs = await this.collection.remove({_id: req.params.id});
-      if (docs.length === 0) {
-        res.statusCode = 404;
-        return Error('Document not found in collection');
+      const doc = await this.collection.deleteOne({_id: req.params.id});
+      if (!doc) {
+        res.statusCode = 204;
+        res.send(null);
       }
-      return docs[0];
+      return doc;
     });
   }
 

@@ -52,8 +52,7 @@ describe('Resource', () => {
     it('should return error when document not found', () => {
       return request(app)
         .get('/readonly/doc3')
-        .expect(404)
-        .then(res => expect(res.body.message).to.eql('Failed to find document in collection'));
+        .expect(404);
     });
   });
 
@@ -107,7 +106,7 @@ describe('Resource', () => {
     it('should fail when document does not exist ', () => {
       return request(app)
         .delete('/readwrite/doc4')
-        .expect(404);
+        .expect(204);
     });
 
     it('should delete and return document', () => {
@@ -120,8 +119,7 @@ describe('Resource', () => {
     it('should have modified the collection', () => {
       return request(app)
         .get('/readwrite/doc3')
-        .expect(404)
-        .then(res => expect(res.body.message).to.eql('Failed to find document in collection'));
+        .expect(404);
     });
   });
 });
