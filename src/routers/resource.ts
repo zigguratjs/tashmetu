@@ -50,17 +50,7 @@ export class Resource {
 
       res.setHeader('X-total-count', count.toString());
 
-      const cursor = this.collection.find(selector);
-      if (options.offset) {
-        cursor.skip(options.offset);
-      }
-      if (options.limit) {
-        cursor.limit(options.limit);
-      }
-      for (const [key, direction] of options.sort || []) {
-        cursor.sort(key, direction);
-      }
-      return cursor.toArray();
+      return this.collection.find(selector, options).toArray();
     });
   }
 

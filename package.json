@@ -1,6 +1,6 @@
 {
   "name": "@ziqquratu/tashmetu",
-  "version": "0.23.0",
+  "version": "0.23.1",
   "description": "Tashmetu is a server built on express",
   "scripts": {
     "build": "tsc",
@@ -37,7 +37,7 @@
     "@types/supertest-as-promised": "^2.0.35",
     "@typescript-eslint/eslint-plugin": "^2.17.0",
     "@typescript-eslint/parser": "^2.17.0",
-    "@ziqquratu/ziqquratu": "^1.0.0-alpha.2",
+    "@ziqquratu/ziqquratu": "^1.0.0",
     "body-parser": "^1.19.0",
     "chai": "^4.2.0",
     "commitizen": "^4.0.3",
@@ -50,7 +50,7 @@
     "typescript": "^3.7.0"
   },
   "peerDependencies": {
-    "@ziqquratu/ziqquratu": "^1.0.0-alpha.2"
+    "@ziqquratu/ziqquratu": "^1.0.0"
   },
   "config": {
     "commitizen": {
