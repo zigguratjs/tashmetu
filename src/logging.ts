@@ -8,8 +8,8 @@ export class RequestLoggerFactory extends RequestHandlerFactory {
     super('tashmetu.Logger');
   }
 
-  public create(path: string): RequestHandler {
-    return this.resolve((logger: Logger) => {
+  public create(): Promise<RequestHandler> {
+    return this.resolve(async (logger: Logger) => {
       return (req, res, next) => {
         onHeaders(res, () => {
           const url = decodeURIComponent(req.originalUrl);

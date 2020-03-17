@@ -124,10 +124,10 @@ export class ResourceFactory extends ControllerFactory {
     super('ziqquratu.Database', 'tashmetu.Logger');
   }
 
-  public create(): any {
-    return this.resolve((db: Database, logger: Logger) => {
+  public create(): Promise<any> {
+    return this.resolve(async (db: Database, logger: Logger) => {
       return new Resource(
-        db.collection(this.config.collection),
+        await db.collection(this.config.collection),
         logger.inScope('Resource'),
         this.config.readOnly
       );

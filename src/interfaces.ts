@@ -1,9 +1,9 @@
-import {Factory} from '@ziqquratu/ziqquratu';
+import {AsyncFactory} from '@ziqquratu/ziqquratu';
 import {RequestHandler} from 'express';
 import {AddressInfo} from 'net';
 
-export abstract class RequestHandlerFactory extends Factory<RequestHandler> {
-  public abstract create(path: string): RequestHandler;
+export abstract class RequestHandlerFactory extends AsyncFactory<RequestHandler> {
+  public abstract create(path: string): Promise<RequestHandler>;
 }
 
 /**

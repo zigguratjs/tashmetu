@@ -24,18 +24,17 @@ function createAsyncHandler(handler: express.RequestHandler): express.RequestHan
   };
 }
 
-function createHandlers(middleware: Middleware, path: string): express.RequestHandler[] {
-  if (Array.isArray(middleware)) {
-    return middleware.map(m => m instanceof RequestHandlerFactory ? m.create(path) : m);
+async function createHandlers(middleware: Middleware, path: string): Promise<express.RequestHandler[]> {
+  const handlers: express.RequestHandler[] = [];
+  for (const m of (Array.isArray(middleware) ? middleware : [middleware])) {
+    handlers.push(createAsyncHandler(m instanceof RequestHandlerFactory ? await m.create(path) : m));
   }
-  return [middleware instanceof RequestHandlerFactory ? middleware.create(path) : middleware];
+  return handlers;
 }
 
-export function mountRoutes(r: express.Router, ...routes: Route[]): express.Router {
+export async function mountRoutes(r: express.Router, ...routes: Route[]): Promise<express.Router> {
   for (const route of routes) {
-    const handlers = createHandlers(route.handlers, route.path || '/')
-      .map(h => createAsyncHandler(h));
-
+    const handlers = await createHandlers(route.handlers, route.path || '/')
     if (route.method) {
       (r as any)[route.method](route.path, handlers);
     } else if (route.path) {
@@ -44,5 +43,6 @@ export function mountRoutes(r: express.Router, ...routes: Route[]): express.Rout
       r.use(handlers);
     }
   }
+  // console.log('mounted routes');
   return r;
 }

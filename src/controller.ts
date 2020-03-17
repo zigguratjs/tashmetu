@@ -1,5 +1,5 @@
 import * as express from 'express';
-import {Factory, Logger, ServiceRequest} from '@ziqquratu/ziqquratu';
+import {AsyncFactory, Logger, ServiceRequest} from '@ziqquratu/ziqquratu';
 import {RequestHandlerFactory, Route} from './interfaces';
 import {SocketGateway} from './gateway';
 import {RouterAnnotation} from './decorators/middleware';
@@ -9,8 +9,8 @@ export function controllerName(ctr: any): string {
   return typeof ctr.toString === 'function' ? ctr.toString() : ctr.constructor.name;
 }
 
-export abstract class ControllerFactory extends Factory<any> {
-  public abstract create(): any;
+export abstract class ControllerFactory extends AsyncFactory<any> {
+  public abstract create(): Promise<any>;
 }
 
 /**
@@ -21,8 +21,8 @@ export class ProviderControllerFactory extends ControllerFactory {
     super(provider);
   }
 
-  public create(): any {
-    return this.resolve((controller: any) => controller);
+  public create(): Promise<any> {
+    return this.resolve(async (controller: any) => controller);
   }
 }
 
@@ -34,10 +34,10 @@ export class RouterFactory extends RequestHandlerFactory {
     super('tashmetu.SocketGateway', 'tashmetu.Logger');
   }
 
-  public create(path: string): express.RequestHandler {
-    const controller = this.controllerFactory.create();
+  public create(path: string): Promise<express.RequestHandler> {
+    return this.resolve(async (gateway: SocketGateway, logger: Logger) => {
+      const controller = await this.controllerFactory.create();
 
-    return this.resolve((gateway: SocketGateway, logger: Logger) => {
       logger = logger.inScope('RouterFactory');
       logger.info(`'${path}' as ${controllerName(controller)}`);
       let routes: Route[] = [];
